@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BigText — Complete Payment Process</title>
+<style>
+  :root{
+    --bg:#f7f8fa; --card:#fff; --ink:#111827; --ink2:#4b5563; --ink3:#6b7280;
+    --line:#e5e7eb; --brand:#123768; --brand2:#1e4a8a; --accent:#e8eef5;
+    --ok:#16a34a; --warn:#b45309; --warnbg:#fffbeb; --warnline:#fde68a;
+    --bad:#b91c1c; --badbg:#fef2f2; --badline:#fecaca;
+    --code:#0f172a; --codeink:#e2e8f0;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --bg:#0d1117; --card:#161b22; --ink:#e6edf3; --ink2:#adbac7; --ink3:#8b949e;
+      --line:#30363d; --brand:#6ea8ff; --brand2:#8ec0ff; --accent:#1a2634;
+      --ok:#4ade80; --warn:#fbbf24; --warnbg:#241d05; --warnline:#5a4405;
+      --bad:#f87171; --badbg:#2a1214; --badline:#5c1f22;
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
+  .wrap{max-width:980px;margin:0 auto;padding:32px 20px 80px}
+  header{background:linear-gradient(135deg,#123768,#1e4a8a);color:#fff;border-radius:18px;
+    padding:34px 28px;margin-bottom:28px}
+  header h1{margin:0 0 8px;font-size:28px;letter-spacing:-.4px}
+  header p{margin:0;opacity:.85;font-size:15px}
+  h2{font-size:21px;margin:44px 0 6px;letter-spacing:-.3px;padding-bottom:8px;border-bottom:2px solid var(--line)}
+  h3{font-size:16px;margin:26px 0 8px}
+  p,li{color:var(--ink2)}
+  code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.88em;
+    background:var(--accent);color:var(--ink);padding:2px 6px;border-radius:5px}
+  pre{background:var(--code);color:var(--codeink);padding:14px 16px;border-radius:10px;
+    overflow-x:auto;font-size:13px;line-height:1.55}
+  pre code{background:none;color:inherit;padding:0}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin:16px 0}
+  .tablewrap{overflow-x:auto;margin:16px 0}
+  table{border-collapse:collapse;width:100%;min-width:520px;background:var(--card);
+    border:1px solid var(--line);border-radius:12px;overflow:hidden;font-size:14px}
+  th{background:var(--accent);text-align:left;padding:10px 12px;font-weight:600;color:var(--ink)}
+  td{padding:10px 12px;border-top:1px solid var(--line);color:var(--ink2);vertical-align:top}
+  td code{font-size:12.5px}
+  .note{border-left:4px solid var(--brand);background:var(--card);border-radius:0 10px 10px 0;
+    padding:14px 18px;margin:16px 0}
+  .warn{border-left:4px solid var(--warn);background:var(--warnbg);border:1px solid var(--warnline);
+    border-left-width:4px;border-radius:0 10px 10px 0;padding:14px 18px;margin:16px 0}
+  .warn strong{color:var(--warn)}
+  .bad{border-left:4px solid var(--bad);background:var(--badbg);border:1px solid var(--badline);
+    border-left-width:4px;border-radius:0 10px 10px 0;padding:14px 18px;margin:16px 0}
+  .bad strong{color:var(--bad)}
+  .flow{display:flex;flex-direction:column;gap:0;margin:20px 0}
+  .step{display:flex;gap:14px;align-items:flex-start}
+  .num{flex:0 0 30px;height:30px;border-radius:50%;background:var(--brand);color:#fff;
+    display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700}
+  @media (prefers-color-scheme:dark){.num{background:#1e4a8a;color:#fff}}
+  .body{flex:1;padding-bottom:20px}
+  .body b{color:var(--ink);display:block;margin-bottom:2px}
+  .body .where{font-size:12.5px;color:var(--ink3);font-family:ui-monospace,Menlo,monospace}
+  .arrow{margin-left:14px;width:2px;background:var(--line);height:8px;margin-top:-18px;margin-bottom:10px}
+  .pill{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.4px;
+    padding:3px 9px;border-radius:20px;background:var(--accent);color:var(--brand);margin-right:6px}
+  .pill.ios{background:#dbeafe;color:#1e40af}
+  .pill.and{background:#dcfce7;color:#166534}
+  @media (prefers-color-scheme:dark){.pill.ios{background:#16283f;color:#93c5fd}.pill.and{background:#12301d;color:#86efac}}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin:16px 0}
+  .box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+  .box h4{margin:0 0 6px;font-size:14px;color:var(--ink)}
+  .box p{margin:0;font-size:13.5px}
+  .diagram{overflow-x:auto;background:var(--card);border:1px solid var(--line);
+    border-radius:14px;padding:18px;margin:20px 0}
+  .diagram pre{background:none;color:var(--ink2);font-size:12.5px;line-height:1.45;margin:0}
+  ul{padding-left:22px}
+  .k{color:var(--ink);font-weight:600}
+  footer{margin-top:60px;font-size:13px;color:var(--ink3);border-top:1px solid var(--line);padding-top:16px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>BigText — Complete Payment Process</h1>
+  <p>How a user pays for BigText Pro, end to end: from the upgrade banner to Pro being unlocked on device.
+     Traced from the Flutter source in <code style="background:rgba(255,255,255,.15);color:#fff">lib/</code>.</p>
+</header>
+
+<h2>1. The short version</h2>
+<div class="card">
+  <p><b>BigText does not process payments itself.</b> There is no server, no card form, no Stripe/Razorpay.
+  All money moves through the platform store — <span class="pill ios">Apple StoreKit</span>
+  <span class="pill and">Google Play Billing</span> — via the
+  <code>in_app_purchase: ^3.2.0</code> Flutter plugin.</p>
+  <p style="margin-bottom:0">The app's only jobs are: (1) show the plans, (2) ask the store to open its native
+  payment sheet, (3) listen for the store's result, and (4) write <code>isPro = true</code> into
+  <code>SharedPreferences</code> on the device so features unlock and ads switch off.</p>
+</div>
+
+<div class="diagram">
+<pre>
+  USER                    BIGTEXT APP                     PLATFORM STORE           APPLE / GOOGLE
+   │                           │                                │                      │
+   │  taps "Upgrade to Pro"    │                                │                      │
+   ├──────────────────────────>│                                │                      │
+   │                           │  queryProductDetails(ids)      │                      │
+   │                           ├───────────────────────────────>│  fetch catalog       │
+   │                           │<───────────────────────────────┤<─────────────────────┤
+   │  sees plans, taps CTA     │                                │                      │
+   ├──────────────────────────>│                                │                      │
+   │                           │  buyNonConsumable(product)     │                      │
+   │                           ├───────────────────────────────>│                      │
+   │      native payment sheet (Face ID / password / UPI / card)  │                     │
+   │<───────────────────────────────────────────────────────────┤                      │
+   │  confirms payment         │                                │  charge the account  │
+   ├────────────────────────────────────────────────────────────┼─────────────────────>│
+   │                           │  purchaseStream -> purchased   │                      │
+   │                           │<───────────────────────────────┤<─────────────────────┤
+   │                           │  _verifyPurchase (LOCAL ONLY)  │                      │
+   │                           │  _deliverProduct -> isPro=true │                      │
+   │                           │  completePurchase(purchase)    │                      │
+   │                           ├───────────────────────────────>│                      │
+   │  "You're Pro!" screen     │                                │                      │
+   │<──────────────────────────┤                                │                      │
+</pre>
+</div>
+
+<h2>2. What is actually sold</h2>
+<p>Three products, defined once in <code>lib/utils/constants.dart</code> (<code>class ProductIds</code>) and mirrored
+in <code>ios/Products.storekit</code> for local StoreKit testing.</p>
+
+<div class="tablewrap">
+<table>
+<thead><tr><th>Plan</th><th>Product ID</th><th>Store type</th><th>Price shown in app</th></tr></thead>
+<tbody>
+<tr><td>Monthly</td><td><code>bigtext_pro_month_</code></td><td>Auto-renewing subscription (group <code>bigtext_pro_group</code>)</td><td>$0.99 / month</td></tr>
+<tr><td>Yearly <span class="pill">BEST VALUE</span></td><td><code>bigtext_pro_year_</code></td><td>Auto-renewing subscription</td><td>$9.99 / year &mdash; "Save 16%" (calculated from the monthly price)</td></tr>
+<tr><td>Lifetime</td><td><code>bigtext_pro_lifetime</code></td><td>Non-consumable (one-time)</td><td>$19.99 once</td></tr>
+</tbody>
+</table>
+</div>
+
+<p>The same IDs are used on both platforms — <code>_monthlyIos</code> and <code>_monthlyAndroid</code> hold identical
+strings, so the platform getters are effectively decorative today.</p>
+
+<div class="warn">
+  <strong>Two ID details worth checking before release.</strong>
+  The subscription IDs end in a trailing underscore (<code>bigtext_pro_month_</code>, <code>bigtext_pro_year_</code>).
+  That looks like a leftover from naming, but it must match App Store Connect / Play Console
+  <em>exactly</em> or <code>queryProductDetails</code> returns them in <code>notFoundIDs</code> and the buy button fails
+  with "Product not found".
+</div>
+
+<h2>3. Where the payment flow can start</h2>
+<p>Every path funnels into the same route, <code>/subscription</code>:</p>
+
+<div class="grid">
+  <div class="box">
+    <h4>Upgrade banner</h4>
+    <p>Gradient card at the top of Settings, shown only when <code>isPro == false</code>.
+    Tapping it → <code>Get.toNamed('/subscription')</code>.<br>
+    <span class="where">lib/widgets/upgrade_banner.dart:21</span></p>
+  </div>
+  <div class="box">
+    <h4>Pro-locked feature tap</h4>
+    <p>Tapping a Pro-only row in Settings (company name, logo upload, locked fonts/colors)
+    opens the <code>UpgradeBottomSheet</code>. Its "See Plans" button → <code>/subscription</code>.<br>
+    <span class="where">lib/screens/settings_screen.dart:178, 211, 229, 247, 271, 315</span></p>
+  </div>
+  <div class="box">
+    <h4>Restore purchases</h4>
+    <p>"Restore" text button in the subscription screen's app bar — for users who already paid
+    (new device, reinstall).<br>
+    <span class="where">lib/screens/subscription_screen.dart:140</span></p>
+  </div>
+</div>
+
+<div class="note">
+  <b>Route wiring:</b> <code>/subscription → SubscriptionWrapper</code> and
+  <code>/purchase-success → PurchaseSuccessWrapper</code> in <code>lib/app/routes/app_pages.dart:22-23</code>.
+  The wrappers exist because navigation is GetX but state is Riverpod — each one loads
+  <code>SharedPreferences</code>, shows a spinner, then builds a <code>ProviderScope</code> with
+  <code>sharedPreferencesProvider</code> overridden.
+</div>
+
+<h2>4. The purchase, step by step</h2>
+
+<div class="flow">
+
+  <div class="step">
+    <div class="num">0</div>
+    <div class="body">
+      <b>App launch — the store connection opens</b>
+      <code>PurchaseService().init()</code> runs before <code>runApp()</code>. It calls
+      <code>InAppPurchase.isAvailable()</code>, subscribes to <code>purchaseStream</code>, and calls
+      <code>loadProducts()</code>. If the device has IAP disabled, <code>_isAvailable</code> stays false and every
+      later buy attempt fails fast with "In-app purchases not available".
+      <div class="where">lib/main.dart:24 → lib/data/services/purchase_service.dart:42</div>
+    </div>
+  </div>
+  <div class="arrow"></div>
+
+  <div class="step">
+    <div class="num">1</div>
+    <div class="body">
+      <b>Catalog fetch</b>
+      <code>loadProducts()</code> calls <code>queryProductDetails(ProductIds.all)</code>, keeps
+      <code>response.productDetails</code>, logs anything in <code>notFoundIDs</code>, then sorts the list
+      monthly → yearly → lifetime.
+      <div class="where">purchase_service.dart:67-89</div>
+    </div>
+  </div>
+  <div class="arrow"></div>
+
+  <div class="step">
+    <div class="num">2</div>
+    <div class="body">
+      <b>Paywall screen renders</b>
+      <code>SubscriptionScreen</code> locks to portrait, defaults the selection to
+      <code>ProductIds.yearly</code>, and records <code>_wasNotPro</code> in a post-frame callback so it can detect
+      the transition to Pro later. Three tappable <code>_PlanCard</code>s, a five-item feature list, then the CTA.
+      <div class="where">lib/screens/subscription_screen.dart:16-45</div>
+    </div>
+  </div>
+  <div class="arrow"></div>
+
+  <div class="step">
+    <div class="num">3</div>
+    <div class="body">
+      <b>User taps "Continue with … — $price"</b>
+      The button calls <code>subscriptionProvider.notifier.buy(_selectedPlan)</code>. The notifier immediately sets
+      <code>isPurchasing: true</code> (button swaps to a spinner and is disabled) and forwards to
+      <code>PurchaseService.buy()</code>.
+      <div class="where">subscription_screen.dart:316-321 → subscription_provider.dart:114</div>
+    </div>
+  </div>
+  <div class="arrow"></div>
+
+  <div class="step">
+    <div class="num">4</div>
+    <div class="body">
+      <b>Pre-flight guards in <code>buy()</code></b>
+      Rejects if <code>kTestPurchaseMode</code> is on (see §7), if the store isn't available, if a purchase is
+      already in flight, or if the selected product ID isn't in the loaded catalog — the last one produces
+      the "Product not found: …" error you'd see if store setup is incomplete.
+      <div class="where">purchase_service.dart:94-148</div>
+    </div>
+  </div>
+  <div class="arrow"></div>
+
+  <div class="step">
+    <div class="num">5</div>
+    <div class="body">
+      <b>Hand off to the store — this is where money is involved</b>
+      <code>_iap.buyNonConsumable(PurchaseParam(productDetails: product))</code>. All three products go through
+      <code>buyNonConsumable</code> (correct: subscriptions are non-consumable too). Apple/Google now show their own
+      native sheet; the app has no control over it and never sees card details.
+      <div class="where">purchase_service.dart:156-161</div>
+    </div>
+  </div>
+  <div class="arrow"></div>
+
+  <div class="step">
+    <div class="num">6</div>
+    <div class="body">
+      <b>Result arrives on <code>purchaseStream</code></b>
+      Asynchronously, possibly minutes later (pending bank auth). <code>_handlePurchase()</code> switches on
+      <code>purchase.status</code>:
+      <div class="tablewrap" style="margin:10px 0 4px">
+      <table>
+        <thead><tr><th>Status</th><th>What the app does</th></tr></thead>
+        <tbody>
+        <tr><td><span class="k">pending</span></td><td>Keeps the spinner up.</td></tr>
+        <tr><td><span class="k">purchased</span></td><td>Verify → deliver → clear spinner.</td></tr>
+        <tr><td><span class="k">restored</span></td><td>Same as purchased, plus sets <code>_restoredAnyPurchase</code>.</td></tr>
+        <tr><td><span class="k">error</span></td><td>Surfaces <code>purchase.error.message</code> in the red banner on the paywall.</td></tr>
+        <tr><td><span class="k">canceled</span></td><td>Silently clears the spinner ("Purchase was canceled" is stored but not shown as an error callback).</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <div class="where">purchase_service.dart:217-272</div>
+    </div>
+  </div>
+  <div class="arrow"></div>
+
+  <div class="step">
+    <div class="num">7</div>
+    <div class="body">
+      <b>Verification</b>
+      <code>_verifyPurchase()</code> currently just re-checks that the status is <code>purchased</code> or
+      <code>restored</code> and returns true. The receipt in <code>purchase.verificationData</code> is never sent
+      anywhere. See §8 — this is the biggest gap in the flow.
+      <div class="where">purchase_service.dart:277-286</div>
+    </div>
+  </div>
+  <div class="arrow"></div>
+
+  <div class="step">
+    <div class="num">8</div>
+    <div class="body">
+      <b>Delivery — Pro is written to the device</b>
+      <code>_deliverProduct()</code> maps the product ID to a <code>SubscriptionType</code> and writes four keys to
+      <code>SharedPreferences</code>, then fires <code>onPurchaseUpdated(true, type)</code>.
+      <div class="where">purchase_service.dart:291-310</div>
+    </div>
+  </div>
+  <div class="arrow"></div>
+
+  <div class="step">
+    <div class="num">9</div>
+    <div class="body">
+      <b>Transaction is finished with the store</b>
+      <code>if (purchase.pendingCompletePurchase) await _iap.completePurchase(purchase)</code> — mandatory.
+      Skipping it makes Apple/Google re-deliver the transaction forever and, on Android, auto-refund after
+      three days.
+      <div class="where">purchase_service.dart:269-271</div>
+    </div>
+  </div>
+  <div class="arrow"></div>
+
+  <div class="step">
+    <div class="num">10</div>
+    <div class="body">
+      <b>UI reacts</b>
+      The service callback updates <code>SubscriptionState</code> (<code>isPro: true, isPurchasing: false</code>).
+      The <code>ref.listen</code> in the paywall sees <code>_wasNotPro &amp;&amp; next.isPro &amp;&amp; !next.isPurchasing</code>
+      and runs <code>Get.offNamed('/purchase-success')</code>.
+      <div class="where">subscription_provider.dart:69-76 → subscription_screen.dart:39-44</div>
+    </div>
+  </div>
+  <div class="arrow"></div>
+
+  <div class="step">
+    <div class="num">11</div>
+    <div class="body">
+      <b>"You're Pro!" and back to work</b>
+      <code>PurchaseSuccessScreen</code> shows 🎉, the five unlocked items, and a "Start Using Pro" button that runs
+      <code>Get.offAllNamed('/home')</code> — clearing the paywall from the stack so Back can't return to it.
+      <div class="where">lib/screens/purchase_success_screen.dart:120-123</div>
+    </div>
+  </div>
+
+</div>
+
+<h2>5. What Pro actually changes</h2>
+<p>Everything gates off the four <code>SharedPreferences</code> keys written in step 8:</p>
+
+<div class="tablewrap">
+<table>
+<thead><tr><th>Key</th><th>Type</th><th>Written / read by</th></tr></thead>
+<tbody>
+<tr><td><code>isPro</code></td><td>bool</td><td>The single source of truth. Read by <code>SubscriptionNotifier._loadInitialState()</code>, by <code>AdProvider</code> on every ad decision, and by <code>main()</code> at launch.</td></tr>
+<tr><td><code>subscriptionType</code></td><td>String</td><td><code>free | monthly | yearly | lifetime</code>.</td></tr>
+<tr><td><code>subscriptionProductId</code></td><td>String</td><td>The purchased store ID.</td></tr>
+<tr><td><code>purchaseDate</code></td><td>ISO‑8601 String</td><td>Written but not currently used for anything.</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="grid">
+  <div class="box">
+    <h4>Ads switch off</h4>
+    <p>Free: banner + interstitial every N actions. Pro: <code>AdProvider</code> reads <code>isPro</code> and skips
+    initialization entirely; <code>onUserBecamePro()</code> disposes live ads. <code>main()</code> won't even call
+    <code>AdService().init()</code> for a Pro user.<br>
+    <span class="where">lib/providers/ad_provider.dart:106-116, 199 · lib/main.dart:27-30</span></p>
+  </div>
+  <div class="box">
+    <h4>Limits lift</h4>
+    <p><code>FreeTierLimits</code> → <code>ProTierLimits</code>: fonts 4→12, colors 6→15, recent messages 10→50,
+    custom logo false→true.<br>
+    <span class="where">lib/utils/constants.dart:88-106</span></p>
+  </div>
+  <div class="box">
+    <h4>Feature checks</h4>
+    <p><code>canUseFeature(ProFeature.…)</code> returns true for everything when <code>isPro</code>.
+    Note: Business and Presentation modes are already free
+    (<code>canUseBusinessMode = true</code>), even though the paywall lists them as Pro features.<br>
+    <span class="where">subscription_provider.dart:155-172</span></p>
+  </div>
+</div>
+
+<h2>6. Restore purchases</h2>
+<p>Needed for reinstalls, new devices, and required by App Review for non-consumables.</p>
+<pre><code>restore()  →  _iap.restorePurchases()
+           →  wait 2 seconds for purchaseStream events
+           →  each event arrives as PurchaseStatus.restored
+           →  _verifyPurchase → _deliverProduct → isPro = true
+           →  if nothing came back: error "No purchases to restore"</code></pre>
+<p>The 2-second wait is a timing heuristic rather than a real completion signal
+(<code>purchase_service.dart:176-212</code>). On a slow connection a legitimate restore can land <em>after</em> the
+timeout, so the user sees "No purchases to restore" and then silently becomes Pro a moment later.</p>
+
+<h2>7. Test mode — the free-Pro switch</h2>
+<div class="bad">
+  <strong>Guard this constant on every release.</strong>
+  <code>kTestPurchaseMode</code> at <code>purchase_service.dart:12</code>. When <code>true</code>,
+  <code>buy()</code> never contacts the store: it waits one second, writes <code>isPro = true</code>, and returns
+  success. Ship that and every user gets Pro for free.
+  <p style="margin:8px 0 0">Current value in this checkout: <code>false</code> — correct for production.
+  This requires the Paid Apps Agreement to be active and all three products approved, otherwise the store
+  returns an empty catalog and buy fails.</p>
+</div>
+
+<p>The four ways to exercise payments, per <code>IN_APP_PURCHASE_GUIDE.md</code>:</p>
+<div class="tablewrap">
+<table>
+<thead><tr><th>Method</th><th>Real money</th><th>Works on simulator</th><th>Use for</th></tr></thead>
+<tbody>
+<tr><td><code>kTestPurchaseMode = true</code></td><td>No — fully faked</td><td>Yes, both platforms</td><td>UI iteration only</td></tr>
+<tr><td>StoreKit config file (<code>ios/Products.storekit</code>)</td><td>No — local StoreKit</td><td>iOS only</td><td>Real plugin code path, no accounts needed</td></tr>
+<tr><td>Sandbox / License tester</td><td>No — store-side sandbox</td><td>Physical device only</td><td>Pre-release verification</td></tr>
+<tr><td>Production</td><td>Yes</td><td>Physical device only</td><td>Live</td></tr>
+</tbody>
+</table>
+</div>
+
+<h2>8. Gaps in the current flow</h2>
+<p>Things a reviewer or a determined user will find. Listed roughly by impact.</p>
+
+<div class="card">
+  <h3 style="margin-top:0">No server-side receipt validation</h3>
+  <p><code>_verifyPurchase()</code> trusts the client (<code>purchase_service.dart:277-286</code>, with a TODO saying
+  as much). Anyone who can write to <code>SharedPreferences</code> — a rooted/jailbroken device, or a restored
+  backup from a Pro device — gets Pro. Fixing it means posting
+  <code>purchase.verificationData.serverVerificationData</code> to a backend that calls Apple's
+  <code>verifyReceipt</code> / Google's Play Developer API.</p>
+
+  <h3>Subscriptions never expire on device</h3>
+  <p><code>isPro</code> is a permanent local boolean. Nothing reads <code>purchaseDate</code>, no expiry is stored, and
+  there is no renewal or cancellation check. A user who buys one month of Pro and cancels keeps Pro forever
+  as long as they don't reinstall. The comment at <code>purchase_service.dart:303-304</code> acknowledges the
+  missing expiry handling.</p>
+
+  <h3>Prices are hardcoded in the UI, not read from the store</h3>
+  <p><code>_buildPlanCards()</code> and <code>_buildCTAButton()</code> hardcode <code>$1.99 / $14.99 / $29.99</code>
+  (<code>subscription_screen.dart:203-308</code>) even though <code>PurchaseService.getPrice()</code> exists and returns
+  the store's localized string. Consequences: wrong currency for non-US users, and prices that silently
+  diverge from App Store Connect. The upgrade bottom sheet already disagrees — it advertises
+  "from $0.99/mo" (<code>upgrade_bottom_sheet.dart:113</code>) against an actual $1.99 monthly.</p>
+
+  <h3>Required subscription legal text is missing</h3>
+  <p><code>_buildLegalText()</code> returns an empty <code>SizedBox</code>
+  (<code>subscription_screen.dart:352-354</code>). Both stores require auto-renew terms plus links to Terms and
+  Privacy Policy on the paywall; App Review rejects subscription paywalls without them.</p>
+
+  <h3>Smaller items</h3>
+  <ul>
+    <li>Feature lists disagree across surfaces — the bottom sheet promises "custom logo upload" and "12 colors",
+        the paywall says "All colors + custom" and 12 fonts, while <code>ProTierLimits.maxColors</code> is 15.</li>
+    <li>Business/Presentation modes are sold as Pro but are free in code (<code>constants.dart:93-94</code>).</li>
+    <li><code>_wasNotPro</code> is set in a post-frame callback; an already-Pro user reopening the paywall can't
+        accidentally trigger the success redirect, but a purchase completing before that callback runs would be
+        missed.</li>
+    <li>A canceled purchase clears the spinner without calling <code>onPurchaseError</code>, so the paywall shows no
+        feedback — intentional, but worth knowing when debugging "nothing happened".</li>
+    <li><code>prodInterstitialAndroid</code> is an empty string (<code>constants.dart:16</code>) — unrelated to
+        payments, but it means Android interstitials are broken for free users.</li>
+  </ul>
+</div>
+
+<h2>9. File map</h2>
+<div class="tablewrap">
+<table>
+<thead><tr><th>File</th><th>Role in the payment flow</th></tr></thead>
+<tbody>
+<tr><td><code>lib/data/services/purchase_service.dart</code></td><td>All store interaction: init, catalog, buy, restore, stream handling, verify, deliver. Singleton.</td></tr>
+<tr><td><code>lib/providers/subscription_provider.dart</code></td><td>Riverpod state (<code>isPro</code>, <code>isPurchasing</code>, <code>error</code>, products) + feature-gating helpers.</td></tr>
+<tr><td><code>lib/utils/constants.dart</code></td><td>Product IDs, <code>SubscriptionType</code>, free vs Pro tier limits.</td></tr>
+<tr><td><code>lib/screens/subscription_screen.dart</code></td><td>The paywall: plan cards, CTA, error banner, restore, redirect on success.</td></tr>
+<tr><td><code>lib/screens/purchase_success_screen.dart</code></td><td>Post-purchase confirmation.</td></tr>
+<tr><td><code>lib/screens/subscription_wrapper.dart</code><br><code>lib/screens/purchase_success_wrapper.dart</code></td><td>GetX↔Riverpod bridges that inject <code>SharedPreferences</code>.</td></tr>
+<tr><td><code>lib/widgets/upgrade_banner.dart</code><br><code>lib/widgets/upgrade_bottom_sheet.dart</code></td><td>Entry points into the paywall.</td></tr>
+<tr><td><code>lib/providers/ad_provider.dart</code></td><td>Consumer of <code>isPro</code> — the main thing a payment buys.</td></tr>
+<tr><td><code>lib/main.dart</code></td><td>Calls <code>PurchaseService().init()</code> at startup; skips ad init for Pro.</td></tr>
+<tr><td><code>ios/Products.storekit</code></td><td>Local StoreKit test catalog (prices, subscription group, periods).</td></tr>
+<tr><td><code>IN_APP_PURCHASE_GUIDE.md</code></td><td>Existing setup/testing runbook for both stores.</td></tr>
+</tbody>
+</table>
+</div>
+
+<footer>
+  Generated from the BigText source at <code>/Users/lovleenghumaan/Downloads/bigtext-main</code>.
+  Line references match the code as of this reading — re-check them after refactors.
+</footer>
+
+</div>
+</body>
+</html>

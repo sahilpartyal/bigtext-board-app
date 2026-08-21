@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BigText - Subscription Implementation Roadmap</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: #e4e4e4;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .header h1 {
+            font-size: 2.8rem;
+            background: linear-gradient(90deg, #00d4ff, #7b2cbf, #ff6b6b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+        }
+
+        .header .subtitle {
+            font-size: 1.2rem;
+            color: #a0a0a0;
+        }
+
+        .header .version {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 8px 20px;
+            background: rgba(0, 212, 255, 0.2);
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: #00d4ff;
+        }
+
+        .toc {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .toc h2 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #00d4ff;
+        }
+
+        .toc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .toc a {
+            display: block;
+            padding: 15px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            color: #e4e4e4;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .toc a:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-left-color: #00d4ff;
+            transform: translateX(5px);
+        }
+
+        .toc a span {
+            color: #666;
+            margin-right: 10px;
+        }
+
+        .section {
+            margin-bottom: 50px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 20px;
+            padding: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .section h2 {
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(0, 212, 255, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .section h2 .number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #00d4ff, #7b2cbf);
+            border-radius: 12px;
+            font-size: 1.2rem;
+            color: white;
+        }
+
+        .section h3 {
+            font-size: 1.3rem;
+            margin: 30px 0 15px;
+            color: #7b2cbf;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 15px 20px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        th {
+            background: rgba(0, 212, 255, 0.15);
+            color: #00d4ff;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .code-block {
+            background: #0d1117;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+            overflow-x: auto;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 0.9rem;
+            white-space: pre;
+        }
+
+        .file-path {
+            display: inline-block;
+            background: rgba(123, 44, 191, 0.2);
+            padding: 5px 12px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            color: #d2a8ff;
+            margin: 5px 0;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(0, 212, 255, 0.3);
+        }
+
+        .card-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .card h4 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+
+        .card p {
+            color: #a0a0a0;
+            font-size: 0.95rem;
+        }
+
+        ul, ol {
+            margin: 15px 0;
+            padding-left: 25px;
+        }
+
+        li {
+            margin: 10px 0;
+            color: #c0c0c0;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-left: 8px;
+        }
+
+        .badge-new {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4caf50;
+        }
+
+        .badge-modify {
+            background: rgba(255, 193, 7, 0.2);
+            color: #ffc107;
+        }
+
+        .flow-diagram {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 25px 0;
+            text-align: center;
+        }
+
+        .flow-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .flow-box {
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 10px;
+            padding: 12px 20px;
+            min-width: 150px;
+        }
+
+        .flow-arrow {
+            color: #00d4ff;
+            font-size: 1.5rem;
+        }
+
+        .checklist {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .checklist-item:last-child {
+            border-bottom: none;
+        }
+
+        .checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #00d4ff;
+            border-radius: 4px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .alert {
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid;
+        }
+
+        .alert-info {
+            background: rgba(0, 212, 255, 0.1);
+            border-color: #00d4ff;
+        }
+
+        .alert-warning {
+            background: rgba(255, 193, 7, 0.1);
+            border-color: #ffc107;
+        }
+
+        .alert-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 40px;
+            margin: 30px 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, #00d4ff, #7b2cbf, #ff6b6b);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -33px;
+            top: 25px;
+            width: 12px;
+            height: 12px;
+            background: #00d4ff;
+            border-radius: 50%;
+        }
+
+        .timeline-item h4 {
+            color: #00d4ff;
+            margin-bottom: 10px;
+        }
+
+        .price-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+
+        .price-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .price-card.featured {
+            border-color: #00d4ff;
+            transform: scale(1.02);
+            background: rgba(0, 212, 255, 0.05);
+        }
+
+        .price-card h4 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+
+        .price-card .price {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #00d4ff;
+            margin: 15px 0;
+        }
+
+        .price-card .period {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .tree {
+            font-family: monospace;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 25px;
+            border-radius: 10px;
+            line-height: 1.9;
+            font-size: 0.9rem;
+        }
+
+        .tree .folder { color: #ffc107; }
+        .tree .file-new { color: #4caf50; }
+        .tree .file-modify { color: #ff9800; }
+
+        .footer {
+            text-align: center;
+            padding: 40px;
+            margin-top: 50px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #666;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 { font-size: 2rem; }
+            .section { padding: 25px; }
+            .price-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>BigText Subscription Roadmap</h1>
+            <p class="subtitle">Complete Implementation Guide for In-App Purchases</p>
+            <span class="version">Version 1.0 | May 2025</span>
+        </header>
+
+        <!-- Table of Contents -->
+        <nav class="toc">
+            <h2>Table of Contents</h2>
+            <div class="toc-grid">
+                <a href="#overview"><span>01</span> Overview & Strategy</a>
+                <a href="#plans"><span>02</span> Subscription Plans</a>
+                <a href="#platform"><span>03</span> Platform Setup</a>
+                <a href="#dependencies"><span>04</span> Dependencies</a>
+                <a href="#files"><span>05</span> File Structure</a>
+                <a href="#implementation"><span>06</span> Implementation Steps</a>
+                <a href="#ui-changes"><span>07</span> UI/UX Changes</a>
+                <a href="#screens"><span>08</span> New Screens</a>
+                <a href="#gating"><span>09</span> Feature Gating</a>
+                <a href="#testing"><span>10</span> Testing Checklist</a>
+            </div>
+        </nav>
+
+        <!-- Section 1 -->
+        <section id="overview" class="section">
+            <h2><span class="number">1</span> Overview & Strategy</h2>
+
+            <p>Implement a freemium model where users can unlock premium features through subscription or one-time purchase.</p>
+
+            <h3>Monetization Model</h3>
+            <div class="card-grid">
+                <div class="card">
+                    <div class="card-icon">🆓</div>
+                    <h4>Free Tier</h4>
+                    <p>Simple mode only, 4 fonts, 6 colors, no custom logo, watermark displayed</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">👑</div>
+                    <h4>Pro Tier</h4>
+                    <p>All 3 modes, 12 fonts, all colors + custom, custom logo, no watermark</p>
+                </div>
+            </div>
+
+            <h3>User Flow</h3>
+            <div class="flow-diagram">
+                <div class="flow-row">
+                    <div class="flow-box">App Launch</div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-box">Check Subscription</div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-box">Load Features</div>
+                </div>
+                <div class="flow-row">
+                    <div class="flow-box">Tap Locked Feature</div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-box">Upgrade Screen</div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-box">Purchase</div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-box">Unlock</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2 -->
+        <section id="plans" class="section">
+            <h2><span class="number">2</span> Subscription Plans</h2>
+
+            <div class="price-grid">
+                <div class="price-card">
+                    <h4>Monthly</h4>
+                    <div class="price">$1.99</div>
+                    <div class="period">per month</div>
+                    <p style="margin-top:15px; color:#888;">Product ID:<br><code>bigtext_pro_monthly</code></p>
+                </div>
+                <div class="price-card featured">
+                    <h4>Yearly ⭐</h4>
+                    <div class="price">$9.99</div>
+                    <div class="period">per year (save 58%)</div>
+                    <p style="margin-top:15px; color:#888;">Product ID:<br><code>bigtext_pro_yearly</code></p>
+                </div>
+                <div class="price-card">
+                    <h4>Lifetime</h4>
+                    <div class="price">$19.99</div>
+                    <div class="period">one-time</div>
+                    <p style="margin-top:15px; color:#888;">Product ID:<br><code>bigtext_pro_lifetime</code></p>
+                </div>
+            </div>
+
+            <h3>Feature Comparison</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Feature</th>
+                        <th>Free</th>
+                        <th>Pro</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>Simple Mode</td><td>✅</td><td>✅</td></tr>
+                    <tr><td>Business Mode</td><td>🔒</td><td>✅</td></tr>
+                    <tr><td>Presentation Mode</td><td>🔒</td><td>✅</td></tr>
+                    <tr><td>Font Families</td><td>4</td><td>12</td></tr>
+                    <tr><td>Color Presets</td><td>6</td><td>12 + custom</td></tr>
+                    <tr><td>Custom Logo</td><td>🔒</td><td>✅</td></tr>
+                    <tr><td>Watermark</td><td>Shown</td><td>Hidden</td></tr>
+                    <tr><td>Recent Messages</td><td>10 max</td><td>50 max</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Section 3 -->
+        <section id="platform" class="section">
+            <h2><span class="number">3</span> Platform Setup</h2>
+
+            <div class="alert alert-warning">
+                <div class="alert-title">⚠️ Important</div>
+                Complete platform setup BEFORE writing code. Products must exist in stores for testing.
+            </div>
+
+            <h3>Apple App Store Connect</h3>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <h4>Step 1: Agreements</h4>
+                    <p>App Store Connect → Agreements, Tax, and Banking → Accept "Paid Applications" agreement</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>Step 2: Create Products</h4>
+                    <p>Your App → In-App Purchases → Manage → Create:</p>
+                    <ul>
+                        <li>Auto-Renewable Subscription: bigtext_pro_monthly</li>
+                        <li>Auto-Renewable Subscription: bigtext_pro_yearly</li>
+                        <li>Non-Consumable: bigtext_pro_lifetime</li>
+                    </ul>
+                </div>
+                <div class="timeline-item">
+                    <h4>Step 3: Subscription Group</h4>
+                    <p>Create group "BigText Pro" and add monthly/yearly subscriptions</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>Step 4: Sandbox Testers</h4>
+                    <p>Users and Access → Sandbox Testers → Create test accounts</p>
+                </div>
+            </div>
+
+            <h3>Google Play Console</h3>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <h4>Step 1: Merchant Account</h4>
+                    <p>Play Console → Setup → Payments profile → Set up merchant account</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>Step 2: Create Products</h4>
+                    <p>Your App → Monetize → Products:</p>
+                    <ul>
+                        <li>Subscriptions: bigtext_pro_monthly, bigtext_pro_yearly</li>
+                        <li>In-app products: bigtext_pro_lifetime</li>
+                    </ul>
+                </div>
+                <div class="timeline-item">
+                    <h4>Step 3: License Testers</h4>
+                    <p>Setup → License testing → Add tester Gmail accounts</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4 -->
+        <section id="dependencies" class="section">
+            <h2><span class="number">4</span> Dependencies</h2>
+
+            <h3>Add to pubspec.yaml</h3>
+            <div class="code-block">dependencies:
+  # Add for subscriptions:
+  in_app_purchase: ^3.2.0</div>
+
+            <h3>iOS Configuration</h3>
+            <p class="file-path">ios/Runner/Runner.entitlements</p>
+            <div class="code-block">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;plist version="1.0"&gt;
+&lt;dict&gt;
+    &lt;key&gt;com.apple.developer.in-app-payments&lt;/key&gt;
+    &lt;array&gt;
+        &lt;string&gt;merchant.com.yourcompany.bigtext&lt;/string&gt;
+    &lt;/array&gt;
+&lt;/dict&gt;
+&lt;/plist&gt;</div>
+
+            <h3>Android Configuration</h3>
+            <p class="file-path">android/app/src/main/AndroidManifest.xml</p>
+            <div class="code-block">&lt;manifest&gt;
+    &lt;uses-permission android:name="com.android.vending.BILLING"/&gt;
+    ...
+&lt;/manifest&gt;</div>
+        </section>
+
+        <!-- Section 5 -->
+        <section id="files" class="section">
+            <h2><span class="number">5</span> File Structure</h2>
+
+            <h3>Files to Create & Modify</h3>
+            <div class="tree">
+lib/
+├── data/
+│   ├── models/
+│   │   └── <span class="file-modify">app_settings.dart</span> <span class="badge badge-modify">MODIFY</span>
+│   └── services/
+│       └── <span class="file-new">purchase_service.dart</span> <span class="badge badge-new">NEW</span>
+│
+├── providers/
+│   ├── <span class="file-new">subscription_provider.dart</span> <span class="badge badge-new">NEW</span>
+│   └── <span class="file-modify">settings_provider.dart</span> <span class="badge badge-modify">MODIFY</span>
+│
+├── screens/
+│   ├── subscription/ <span class="badge badge-new">NEW FOLDER</span>
+│   │   ├── <span class="file-new">subscription_screen.dart</span> <span class="badge badge-new">NEW</span>
+│   │   └── components/
+│   │       ├── <span class="file-new">plan_card.dart</span> <span class="badge badge-new">NEW</span>
+│   │       ├── <span class="file-new">feature_list.dart</span> <span class="badge badge-new">NEW</span>
+│   │       └── <span class="file-new">restore_button.dart</span> <span class="badge badge-new">NEW</span>
+│   │
+│   ├── settings/
+│   │   ├── <span class="file-modify">settings_screen.dart</span> <span class="badge badge-modify">MODIFY</span>
+│   │   └── components/
+│   │       └── <span class="file-modify">mode_selector.dart</span> <span class="badge badge-modify">MODIFY</span>
+│   │
+│   └── home/
+│       └── <span class="file-modify">main_display_screen.dart</span> <span class="badge badge-modify">MODIFY</span>
+│
+├── widgets/
+│   ├── <span class="file-modify">font_selector.dart</span> <span class="badge badge-modify">MODIFY</span>
+│   ├── <span class="file-modify">color_swatch_grid.dart</span> <span class="badge badge-modify">MODIFY</span>
+│   ├── <span class="file-new">pro_badge.dart</span> <span class="badge badge-new">NEW</span>
+│   ├── <span class="file-new">locked_feature.dart</span> <span class="badge badge-new">NEW</span>
+│   └── <span class="file-new">watermark.dart</span> <span class="badge badge-new">NEW</span>
+│
+├── utils/
+│   └── <span class="file-modify">constants.dart</span> <span class="badge badge-modify">MODIFY</span>
+│
+└── app/routes/
+    └── <span class="file-modify">app_pages.dart</span> <span class="badge badge-modify">MODIFY</span></div>
+
+            <h3>Summary</h3>
+            <table>
+                <thead>
+                    <tr><th>Action</th><th>Count</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><span class="badge badge-new">NEW FILES</span></td><td>9 files</td></tr>
+                    <tr><td><span class="badge badge-modify">MODIFY FILES</span></td><td>9 files</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Section 6 -->
+        <section id="implementation" class="section">
+            <h2><span class="number">6</span> Implementation Steps</h2>
+
+            <div class="timeline">
+                <div class="timeline-item">
+                    <h4>Phase 1: Core Infrastructure</h4>
+                    <ol>
+                        <li>Add in_app_purchase dependency</li>
+                        <li>Configure iOS entitlements & Android permissions</li>
+                        <li>Create PurchaseService with init, buy, restore methods</li>
+                        <li>Create SubscriptionProvider with Riverpod</li>
+                        <li>Add product IDs to constants.dart</li>
+                    </ol>
+                </div>
+                <div class="timeline-item">
+                    <h4>Phase 2: Data Layer</h4>
+                    <ol>
+                        <li>Add isPro boolean to AppSettings model</li>
+                        <li>Add subscriptionType enum (free, monthly, yearly, lifetime)</li>
+                        <li>Add subscriptionExpiry DateTime</li>
+                        <li>Update SharedPreferences persistence</li>
+                    </ol>
+                </div>
+                <div class="timeline-item">
+                    <h4>Phase 3: Subscription Screen</h4>
+                    <ol>
+                        <li>Create SubscriptionScreen with plan cards</li>
+                        <li>Build PlanCard widget for each tier</li>
+                        <li>Add FeatureList comparison widget</li>
+                        <li>Implement RestoreButton for previous purchases</li>
+                        <li>Add route /subscription to app_pages.dart</li>
+                    </ol>
+                </div>
+                <div class="timeline-item">
+                    <h4>Phase 4: Feature Gating</h4>
+                    <ol>
+                        <li>Create LockedFeature overlay widget</li>
+                        <li>Create ProBadge indicator widget</li>
+                        <li>Modify ModeSelector - lock Business/Presentation</li>
+                        <li>Modify FontSelector - limit to 4 free fonts</li>
+                        <li>Modify ColorSwatchGrid - limit to 6 free colors</li>
+                        <li>Lock custom logo feature</li>
+                    </ol>
+                </div>
+                <div class="timeline-item">
+                    <h4>Phase 5: Free Tier Restrictions</h4>
+                    <ol>
+                        <li>Create Watermark widget</li>
+                        <li>Add watermark to MainDisplayScreen for free users</li>
+                        <li>Limit recent messages to 10 for free tier</li>
+                        <li>Add "Upgrade to Pro" button in settings</li>
+                    </ol>
+                </div>
+                <div class="timeline-item">
+                    <h4>Phase 6: Testing</h4>
+                    <ol>
+                        <li>Test purchase flow on iOS sandbox</li>
+                        <li>Test purchase flow on Android license testing</li>
+                        <li>Test restore purchases</li>
+                        <li>Test subscription expiry handling</li>
+                    </ol>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 7 -->
+        <section id="ui-changes" class="section">
+            <h2><span class="number">7</span> UI/UX Changes Required</h2>
+
+            <h3>Settings Screen Changes</h3>
+            <table>
+                <thead>
+                    <tr><th>Location</th><th>Change</th><th>Details</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Header</td>
+                        <td>Add upgrade banner</td>
+                        <td>"Upgrade to Pro" card with benefits preview</td>
+                    </tr>
+                    <tr>
+                        <td>Mode Selector</td>
+                        <td>Add lock icons</td>
+                        <td>🔒 on Business & Presentation, tap opens subscription</td>
+                    </tr>
+                    <tr>
+                        <td>Font Selector</td>
+                        <td>Limit & lock</td>
+                        <td>Show 4 fonts free, lock remaining 8 with PRO badge</td>
+                    </tr>
+                    <tr>
+                        <td>Color Picker</td>
+                        <td>Limit & lock</td>
+                        <td>Show 6 colors free, lock custom picker</td>
+                    </tr>
+                    <tr>
+                        <td>Logo Section</td>
+                        <td>Lock section</td>
+                        <td>Disable toggle, show "Pro Feature" overlay</td>
+                    </tr>
+                    <tr>
+                        <td>Footer</td>
+                        <td>Add restore</td>
+                        <td>"Restore Purchases" link</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Main Display Changes</h3>
+            <table>
+                <thead>
+                    <tr><th>Element</th><th>Free Tier</th><th>Pro Tier</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Watermark</td>
+                        <td>"BigText" in corner (semi-transparent)</td>
+                        <td>No watermark</td>
+                    </tr>
+                    <tr>
+                        <td>Overlay Controls</td>
+                        <td>Add "⭐ Upgrade" button</td>
+                        <td>Show "PRO" badge or hide</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>New UI Components</h3>
+            <div class="card-grid">
+                <div class="card">
+                    <div class="card-icon">🔒</div>
+                    <h4>LockedFeature</h4>
+                    <p>Semi-transparent overlay with lock icon. Tap navigates to subscription screen.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">⭐</div>
+                    <h4>ProBadge</h4>
+                    <p>Small "PRO" pill badge next to locked features. Gold gradient styling.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">💧</div>
+                    <h4>Watermark</h4>
+                    <p>Positioned bottom-right. Semi-transparent "BigText" text.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🎫</div>
+                    <h4>UpgradeBanner</h4>
+                    <p>Card at top of settings with Pro benefits and "Upgrade Now" CTA.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 8 -->
+        <section id="screens" class="section">
+            <h2><span class="number">8</span> New Screens</h2>
+
+            <h3>Subscription Screen Layout</h3>
+            <div class="code-block">┌─────────────────────────────────────────┐
+│  ← Back                    Restore 🔄   │  ← AppBar
+├─────────────────────────────────────────┤
+│                                         │
+│         ⭐ Unlock BigText Pro           │  ← Header
+│    Access all features, no limits       │
+│                                         │
+├─────────────────────────────────────────┤
+│  ┌─────────┐ ┌─────────┐ ┌─────────┐   │
+│  │ Monthly │ │ Yearly  │ │Lifetime │   │  ← PlanCards
+│  │  $1.99  │ │  $9.99  │ │ $19.99  │   │
+│  │ /month  │ │  /year  │ │  once   │   │
+│  │         │ │ POPULAR │ │         │   │
+│  └─────────┘ └─────────┘ └─────────┘   │
+│                                         │
+├─────────────────────────────────────────┤
+│  What you get with Pro:                 │  ← FeatureList
+│  ✓ Business & Presentation modes        │
+│  ✓ All 12 font families                 │
+│  ✓ All colors + custom picker           │
+│  ✓ Custom logo upload                   │
+│  ✓ No watermark                         │
+│  ✓ 50 recent messages                   │
+│                                         │
+├─────────────────────────────────────────┤
+│  ┌─────────────────────────────────┐   │
+│  │      Continue with Yearly       │   │  ← CTA Button
+│  └─────────────────────────────────┘   │
+│                                         │
+│  Terms • Privacy • Auto-renews          │  ← Legal
+└─────────────────────────────────────────┘</div>
+
+            <h3>Screen States</h3>
+            <div class="card-grid">
+                <div class="card">
+                    <h4>Loading</h4>
+                    <p>Shimmer while fetching products from store</p>
+                </div>
+                <div class="card">
+                    <h4>Processing</h4>
+                    <p>Full-screen loader during purchase transaction</p>
+                </div>
+                <div class="card">
+                    <h4>Success</h4>
+                    <p>Celebration animation, "Welcome to Pro!" auto-dismiss</p>
+                </div>
+                <div class="card">
+                    <h4>Error</h4>
+                    <p>Error message with retry button</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 9 -->
+        <section id="gating" class="section">
+            <h2><span class="number">9</span> Feature Gating Logic</h2>
+
+            <h3>Where to Add Pro Checks</h3>
+            <table>
+                <thead>
+                    <tr><th>Feature</th><th>File</th><th>Location</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Business Mode</td>
+                        <td>mode_selector.dart</td>
+                        <td>~Line 45-60</td>
+                    </tr>
+                    <tr>
+                        <td>Presentation Mode</td>
+                        <td>mode_selector.dart</td>
+                        <td>~Line 65-80</td>
+                    </tr>
+                    <tr>
+                        <td>Font Selection</td>
+                        <td>font_selector.dart</td>
+                        <td>~Line 30-50</td>
+                    </tr>
+                    <tr>
+                        <td>Color Selection</td>
+                        <td>color_swatch_grid.dart</td>
+                        <td>~Line 25-45</td>
+                    </tr>
+                    <tr>
+                        <td>Custom Color</td>
+                        <td>color_swatch_grid.dart</td>
+                        <td>~Line 80-100</td>
+                    </tr>
+                    <tr>
+                        <td>Logo Toggle</td>
+                        <td>settings_screen.dart</td>
+                        <td>~Line 180-200</td>
+                    </tr>
+                    <tr>
+                        <td>Watermark</td>
+                        <td>main_display_screen.dart</td>
+                        <td>Build method</td>
+                    </tr>
+                    <tr>
+                        <td>Recent Messages</td>
+                        <td>recents_provider.dart</td>
+                        <td>~Line 40</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Provider Check Pattern</h3>
+            <div class="code-block">// In any widget that needs Pro check:
+
+class MyWidget extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isPro = ref.watch(subscriptionProvider).isPro;
+
+    if (!isPro) {
+      return LockedFeature(
+        onTap: () => Navigator.pushNamed(context, '/subscription'),
+        child: /* locked UI */,
+      );
+    }
+
+    return /* unlocked UI */;
+  }
+}</div>
+        </section>
+
+        <!-- Section 10 -->
+        <section id="testing" class="section">
+            <h2><span class="number">10</span> Testing Checklist</h2>
+
+            <div class="alert alert-info">
+                <div class="alert-title">📱 Note</div>
+                In-app purchases CANNOT be tested on simulators. Use physical devices with sandbox accounts.
+            </div>
+
+            <div class="checklist">
+                <div class="checklist-item">
+                    <div class="checkbox"></div>
+                    <div><strong>iOS Sandbox Testing</strong><br>Test all 3 purchase types on physical iPhone</div>
+                </div>
+                <div class="checklist-item">
+                    <div class="checkbox"></div>
+                    <div><strong>Android License Testing</strong><br>Test all 3 purchase types on physical Android</div>
+                </div>
+                <div class="checklist-item">
+                    <div class="checkbox"></div>
+                    <div><strong>Restore Purchases</strong><br>Uninstall, reinstall, verify restore works</div>
+                </div>
+                <div class="checklist-item">
+                    <div class="checkbox"></div>
+                    <div><strong>Subscription Expiry</strong><br>Test features lock when subscription expires</div>
+                </div>
+                <div class="checklist-item">
+                    <div class="checkbox"></div>
+                    <div><strong>Network Errors</strong><br>Test with airplane mode / poor connectivity</div>
+                </div>
+                <div class="checklist-item">
+                    <div class="checkbox"></div>
+                    <div><strong>User Cancellation</strong><br>Verify cancelled purchases show proper message</div>
+                </div>
+                <div class="checklist-item">
+                    <div class="checkbox"></div>
+                    <div><strong>Feature Gating</strong><br>Verify ALL Pro features locked for free users</div>
+                </div>
+                <div class="checklist-item">
+                    <div class="checkbox"></div>
+                    <div><strong>Watermark Display</strong><br>Shows for free, hidden for Pro</div>
+                </div>
+                <div class="checklist-item">
+                    <div class="checkbox"></div>
+                    <div><strong>Legal Links</strong><br>Terms & Privacy Policy links work</div>
+                </div>
+            </div>
+
+            <h3>Sandbox Test Durations</h3>
+            <table>
+                <thead>
+                    <tr><th>Platform</th><th>Monthly</th><th>Yearly</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>iOS Sandbox</td><td>5 minutes</td><td>1 hour</td></tr>
+                    <tr><td>Android License</td><td>5 minutes</td><td>30 minutes</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>BigText Subscription Implementation Roadmap</strong></p>
+            <p>Generated May 2025 | Ready to implement? Start with Phase 1</p>
+        </footer>
+    </div>
+</body>
+</html>

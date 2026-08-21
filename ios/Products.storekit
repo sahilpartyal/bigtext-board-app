@@ -1,0 +1,109 @@
+{
+  "appPolicies" : {
+    "eula" : "",
+    "policies" : [
+      {
+        "locale" : "en_US",
+        "policyText" : "",
+        "policyURL" : ""
+      }
+    ]
+  },
+  "identifier" : "BigText Products",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+    {
+      "displayPrice" : "19.99",
+      "familyShareable" : false,
+      "internalID" : "lifetime_001",
+      "localizations" : [
+        {
+          "description" : "Unlock all features forever. Remove ads, access all fonts, colors, and display modes.",
+          "displayName" : "BigText Pro Lifetime",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "bigtext_pro_lifetime",
+      "referenceName" : "BigText Pro Lifetime",
+      "type" : "NonConsumable"
+    }
+  ],
+  "settings" : {
+    "_failTransactionsEnabled" : false,
+    "_locale" : "en_US",
+    "_storefront" : "USA"
+  },
+  "subscriptionGroups" : [
+    {
+      "id" : "bigtext_pro_group",
+      "localizations" : [
+
+      ],
+      "name" : "BigText Pro",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "9.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "yearly_001",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Unlock all features. Auto-renews yearly.",
+              "displayName" : "BigText Pro Yearly",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "bigtext_pro_year_",
+          "recurringSubscriptionPeriod" : "P1Y",
+          "referenceName" : "BigText Pro Yearly",
+          "subscriptionGroupID" : "bigtext_pro_group",
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "0.99",
+          "familyShareable" : false,
+          "groupNumber" : 2,
+          "internalID" : "monthly_001",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Unlock all features. Auto-renews monthly.",
+              "displayName" : "BigText Pro Monthly",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "bigtext_pro_month_",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "BigText Pro Monthly",
+          "subscriptionGroupID" : "bigtext_pro_group",
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
+        }
+      ]
+    }
+  ],
+  "version" : {
+    "major" : 4,
+    "minor" : 0
+  }
+}

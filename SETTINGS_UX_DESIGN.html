@@ -1,0 +1,1287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BigText — Settings Module UX</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f0f2f5;
+    --primary: #123768;
+    --primary-lt: #e8eef5;
+    --primary-dk: #0d2a52;
+    --blue: #123768;
+    --blue-lt: #e8eef5;
+    --green: #16a34a;
+    --green-lt: #dcfce7;
+    --amber: #d97706;
+    --amber-lt: #fef3c7;
+    --red: #dc2626;
+    --txt1: #0d1829;
+    --txt2: #4a5568;
+    --txt3: #94a3b8;
+    --border: #e2e8f0;
+    --surface: #ffffff;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    min-height: 100vh;
+    padding: 40px 20px 80px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Page header ── */
+  .page-header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+  .page-header h1 {
+    font-size: 1.8rem; font-weight: 800;
+    color: var(--txt1); letter-spacing: -0.03em;
+    margin-bottom: 8px;
+  }
+  .page-header p { color: var(--txt2); font-size: 0.95rem; max-width: 500px; margin: 0 auto; }
+
+  /* ── Section divider ── */
+  .section-divider {
+    text-align: center;
+    margin: 48px 0 36px;
+    position: relative;
+  }
+  .section-divider::before {
+    content: '';
+    position: absolute; top: 50%; left: 0; right: 0;
+    height: 1px; background: var(--border);
+  }
+  .section-divider span {
+    background: var(--bg);
+    padding: 0 20px;
+    position: relative;
+    font-size: 0.85rem; font-weight: 700;
+    color: var(--txt2);
+  }
+
+  /* ── Settings Architecture Box ── */
+  .arch-box {
+    max-width: 1000px; margin: 0 auto 40px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px; padding: 32px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+  }
+  .arch-box h2 {
+    font-size: 1.1rem; font-weight: 800;
+    margin-bottom: 20px; color: var(--txt1);
+    display: flex; align-items: center; gap: 10px;
+  }
+
+  .arch-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+  }
+
+  .arch-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    transition: all 0.2s;
+  }
+  .arch-card:hover {
+    border-color: var(--primary);
+    transform: translateY(-2px);
+  }
+  .arch-card-icon {
+    width: 44px; height: 44px;
+    background: var(--primary-lt);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem;
+    margin-bottom: 14px;
+  }
+  .arch-card h4 {
+    font-size: 0.9rem; font-weight: 700;
+    color: var(--txt1); margin-bottom: 6px;
+  }
+  .arch-card p {
+    font-size: 0.78rem; color: var(--txt2);
+    line-height: 1.5;
+  }
+  .arch-card .pro-tag {
+    display: inline-block;
+    background: linear-gradient(135deg, #f59e0b, #ef4444);
+    color: #fff; font-size: 0.55rem; font-weight: 800;
+    padding: 3px 7px; border-radius: 999px;
+    margin-top: 10px;
+    letter-spacing: 0.04em;
+  }
+
+  /* ── Flow container ── */
+  .flow {
+    display: flex;
+    align-items: flex-start;
+    gap: 0;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  /* ── Screen wrapper ── */
+  .screen-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .screen-label {
+    font-size: 0.72rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--txt3);
+  }
+
+  .step-num {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--primary); color: #fff;
+    font-size: 0.8rem; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* ── Arrow between screens ── */
+  .arrow-wrap {
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
+    margin-top: 80px;
+  }
+  .arrow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .arrow-line {
+    width: 40px; height: 2px;
+    background: linear-gradient(90deg, var(--primary), #2563eb);
+    border-radius: 2px;
+  }
+  .arrow-tip {
+    font-size: 1rem; color: var(--primary);
+    margin-left: -4px; line-height: 1;
+  }
+  .arrow-desc {
+    font-size: 0.62rem; color: var(--txt3);
+    font-weight: 600; text-align: center;
+    max-width: 70px; margin-top: 4px;
+  }
+
+  /* ── Phone frame ── */
+  .phone {
+    width: 280px;
+    background: var(--surface);
+    border-radius: 36px;
+    overflow: hidden;
+    box-shadow:
+      0 0 0 10px #1a1a2e,
+      0 25px 70px rgba(0,0,0,0.3);
+    position: relative;
+  }
+  .phone-notch {
+    background: #1a1a2e;
+    height: 34px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .notch-pill {
+    width: 90px; height: 28px;
+    background: #0a0a14;
+    border-radius: 20px;
+  }
+  .phone-screen {
+    background: #f5f7fa;
+    min-height: 520px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* ── Status bar ── */
+  .status-bar {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 8px 20px;
+    background: #f5f7fa;
+    font-size: 0.75rem; font-weight: 600; color: var(--txt1);
+  }
+
+  /* ── App bar ── */
+  .app-bar {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 16px;
+    background: #f5f7fa;
+  }
+  .app-bar-back {
+    font-size: 1.1rem; color: var(--txt1); font-weight: 400;
+  }
+  .app-bar-title {
+    font-size: 1.05rem; font-weight: 700;
+    flex: 1; text-align: center;
+    color: var(--txt1);
+  }
+  .app-bar-action {
+    font-size: 0.75rem; color: var(--primary); font-weight: 600;
+  }
+
+  /* ── Screen content ── */
+  .screen-content { padding: 12px 16px; }
+
+  /* ── Section cards ── */
+  .section-card {
+    background: var(--surface);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .section-title {
+    font-size: 0.95rem; font-weight: 700;
+    color: var(--txt1);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .section-controls {
+    display: flex; align-items: center; gap: 8px;
+  }
+  .collapse-btn {
+    width: 28px; height: 28px;
+    background: #f1f5f9;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem;
+    color: var(--txt3);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .collapse-btn:hover {
+    background: var(--primary-lt);
+    color: var(--primary);
+    border-color: var(--primary);
+  }
+  .collapse-btn.expanded { transform: rotate(180deg); }
+
+  .section-content {
+    transition: all 0.3s ease;
+  }
+  .section-content.collapsed {
+    display: none;
+  }
+
+  /* ── Upgrade banner ── */
+  .upgrade-banner {
+    background: linear-gradient(135deg, #7c6bab, #9b8bc4);
+    border-radius: 16px;
+    padding: 16px 18px;
+    margin-bottom: 14px;
+    display: flex; align-items: center; gap: 14px;
+    cursor: pointer;
+    transition: transform 0.15s;
+  }
+  .upgrade-banner:hover { transform: scale(1.01); }
+  .upgrade-banner-icon {
+    width: 48px; height: 48px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.5rem;
+  }
+  .upgrade-banner-text h4 {
+    font-size: 1rem; font-weight: 700; color: #fff;
+    margin-bottom: 3px;
+  }
+  .upgrade-banner-text p {
+    font-size: 0.72rem; color: rgba(255,255,255,0.85);
+  }
+  .upgrade-banner-cta {
+    margin-left: auto;
+    width: 40px; height: 40px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 1.1rem;
+  }
+
+  /* ── Display Mode cards (matching Upgrade to Pro style) ── */
+  .mode-list {
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .mode-item {
+    display: flex; align-items: center; gap: 14px;
+    padding: 14px 16px;
+    background: #f8fafc;
+    border: 2px solid var(--border);
+    border-radius: 14px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .mode-item.active {
+    border-color: var(--primary);
+    background: var(--primary-lt);
+  }
+  .mode-item-icon {
+    width: 44px; height: 44px;
+    background: var(--primary-lt);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem;
+    color: var(--primary);
+  }
+  .mode-item.active .mode-item-icon {
+    background: var(--primary);
+    color: #fff;
+  }
+  .mode-item-label {
+    font-size: 1rem; font-weight: 700;
+    color: var(--txt1);
+    flex: 1;
+  }
+  .mode-item-check {
+    width: 26px; height: 26px;
+    background: var(--primary);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 0.8rem;
+  }
+  .mode-item-lock {
+    color: var(--txt3); font-size: 1rem;
+  }
+
+  /* ── Setting rows ── */
+  .setting-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid #f1f5f9;
+  }
+  .setting-row:last-child { border-bottom: none; }
+  .setting-row-content { flex: 1; }
+  .setting-row-label {
+    font-size: 0.85rem; font-weight: 500; color: var(--txt2);
+  }
+  .setting-row-value {
+    font-size: 0.75rem; color: var(--txt3); font-weight: 500;
+  }
+  .setting-row-chevron {
+    color: var(--txt3); font-size: 1rem;
+  }
+
+  /* ── Font dropdown ── */
+  .font-dropdown {
+    display: flex; align-items: center;
+    padding: 12px 16px;
+    background: #f8fafc;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-top: 8px;
+  }
+  .font-dropdown-value {
+    flex: 1;
+    font-size: 0.9rem; font-weight: 500; color: var(--txt1);
+  }
+  .font-dropdown-icon {
+    color: var(--txt3); font-size: 1rem;
+  }
+
+  /* ── Toggle switch ── */
+  .toggle {
+    width: 48px; height: 28px;
+    background: #e2e8f0;
+    border-radius: 999px;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .toggle.on { background: var(--primary); }
+  .toggle::after {
+    content: '';
+    position: absolute;
+    width: 24px; height: 24px;
+    background: #fff;
+    border-radius: 50%;
+    top: 2px; left: 2px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+    transition: all 0.2s;
+  }
+  .toggle.on::after { left: 22px; }
+
+  /* ── Slider ── */
+  .slider-row {
+    padding: 10px 0;
+  }
+  .slider-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 8px;
+  }
+  .slider-label {
+    font-size: 0.8rem; font-weight: 500; color: var(--txt2);
+  }
+  .slider-value {
+    background: var(--primary-lt);
+    color: var(--primary);
+    font-size: 0.75rem; font-weight: 700;
+    padding: 4px 12px; border-radius: 8px;
+  }
+  .slider-track {
+    height: 6px;
+    background: #e2e8f0;
+    border-radius: 999px;
+    position: relative;
+  }
+  .slider-fill {
+    height: 100%;
+    background: var(--primary);
+    border-radius: 999px;
+    width: 60%;
+  }
+  .slider-thumb {
+    position: absolute;
+    width: 20px; height: 20px;
+    background: var(--primary);
+    border: 3px solid #fff;
+    border-radius: 50%;
+    top: -7px; left: 56%;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  }
+
+  /* ── Color swatches - Ellipse/Rounded Rectangle style ── */
+  .color-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 8px;
+  }
+  .color-swatch {
+    aspect-ratio: 1;
+    border-radius: 12px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.15s;
+    position: relative;
+    /* Soft fill with vibrant border */
+  }
+  .color-swatch.white { background: #fafafa; border-color: #d1d5db; }
+  .color-swatch.black { background: #1f2937; border-color: #000000; }
+  .color-swatch.red { background: #fecaca; border-color: #ef4444; }
+  .color-swatch.orange { background: #fed7aa; border-color: #f97316; }
+  .color-swatch.yellow { background: #fef08a; border-color: #eab308; }
+  .color-swatch.green { background: #bbf7d0; border-color: #22c55e; }
+  .color-swatch.blue { background: #bfdbfe; border-color: #3b82f6; }
+  .color-swatch.purple { background: #ddd6fe; border-color: #8b5cf6; }
+  .color-swatch.pink { background: #fbcfe8; border-color: #ec4899; }
+  .color-swatch.gray { background: #e5e7eb; border-color: #6b7280; }
+  .color-swatch.teal { background: #99f6e4; border-color: #14b8a6; }
+  .color-swatch.rose { background: #fecdd3; border-color: #f43f5e; }
+
+  .color-swatch.selected {
+    transform: scale(1.05);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+  .color-swatch.selected::after {
+    content: '✓';
+    position: absolute;
+    inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--txt1);
+  }
+  .color-swatch.white.selected::after { color: var(--primary); }
+  .color-swatch.black.selected::after { color: #fff; }
+
+  .color-swatch.locked {
+    opacity: 0.7;
+  }
+  .color-swatch.locked::after {
+    content: '🔒';
+    position: absolute;
+    inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.7rem;
+  }
+
+  /* ── Pro badge ── */
+  .pro-badge {
+    background: #fef3c7;
+    border: 1px solid #fde68a;
+    color: #b45309;
+    font-size: 0.6rem; font-weight: 700;
+    padding: 3px 8px; border-radius: 6px;
+    letter-spacing: 0.02em;
+  }
+
+  /* ── Ad banner ── */
+  .ad-banner {
+    background: #f0f0f0;
+    border-top: 1px solid var(--border);
+    padding: 10px;
+    text-align: center;
+    font-size: 0.62rem; color: var(--txt3);
+    font-weight: 500;
+  }
+  .ad-banner span {
+    background: var(--border);
+    padding: 2px 8px; border-radius: 4px;
+    font-size: 0.55rem; font-weight: 700;
+    margin-right: 6px;
+  }
+
+  /* ── Thought box ── */
+  .thought-box {
+    max-width: 1000px; margin: 0 auto 40px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px; padding: 28px 32px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+  }
+  .thought-box h2 {
+    font-size: 1.05rem; font-weight: 800;
+    margin-bottom: 20px; color: var(--txt1);
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  .thought-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .thought-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 12px; padding: 18px;
+  }
+  .thought-card h4 {
+    font-size: 0.85rem; font-weight: 700;
+    margin-bottom: 10px; display: flex;
+    align-items: center; gap: 8px;
+  }
+  .thought-card ul { list-style: none; padding: 0; }
+  .thought-card li {
+    font-size: 0.82rem; color: var(--txt2);
+    padding: 4px 0; display: flex;
+    align-items: flex-start; gap: 8px;
+  }
+  .thought-card li::before {
+    content: '•'; color: var(--primary);
+    font-weight: 800; flex-shrink: 0;
+  }
+  .thought-card.bad li::before { content: '✗'; color: var(--red); }
+  .thought-card.good li::before { content: '✓'; color: var(--green); }
+
+  .rec-box {
+    background: var(--primary-lt);
+    border: 1px solid #c7d2e8;
+    border-radius: 12px; padding: 16px 20px;
+    font-size: 0.85rem; color: var(--primary-dk);
+    line-height: 1.6;
+  }
+  .rec-box strong { font-weight: 700; display: block; margin-bottom: 6px; }
+
+  /* ── Interaction table ── */
+  .interaction-table {
+    max-width: 1000px; margin: 0 auto 40px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px; overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+  }
+  .interaction-table-header {
+    padding: 24px 28px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .interaction-table-header h2 {
+    font-size: 1.05rem; font-weight: 800; color: var(--txt1);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .interaction-table-header p {
+    font-size: 0.85rem; color: var(--txt2); margin-top: 4px;
+  }
+
+  .tbl { width: 100%; border-collapse: collapse; }
+  .tbl th, .tbl td {
+    padding: 14px 24px; text-align: left;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.85rem;
+  }
+  .tbl th {
+    background: #f8fafc;
+    font-size: 0.7rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.06em;
+    color: var(--txt3);
+  }
+  .tbl tr:last-child td { border-bottom: none; }
+  .tbl tbody tr:hover td { background: var(--primary-lt); }
+
+  .badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.7rem;
+    font-weight: 700;
+  }
+  .badge-primary { background: var(--primary-lt); color: var(--primary); }
+  .badge-green { background: var(--green-lt); color: var(--green); }
+  .badge-amber { background: var(--amber-lt); color: var(--amber); }
+
+  /* ── Hierarchy diagram ── */
+  .hierarchy {
+    max-width: 1000px; margin: 0 auto 40px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px; padding: 32px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+  }
+  .hierarchy h2 {
+    font-size: 1.05rem; font-weight: 800;
+    margin-bottom: 24px; color: var(--txt1);
+    text-align: center;
+  }
+
+  .hierarchy-flow {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .hierarchy-section {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px;
+    min-width: 180px;
+  }
+  .hierarchy-section h4 {
+    font-size: 0.75rem; font-weight: 700;
+    color: var(--txt1); margin-bottom: 12px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .hierarchy-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 10px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 6px;
+    font-size: 0.72rem;
+    color: var(--txt2);
+  }
+  .hierarchy-item:last-child { margin-bottom: 0; }
+  .hierarchy-item.pro {
+    border-color: #fde68a;
+    background: #fffbeb;
+  }
+
+  .hierarchy-arrow {
+    font-size: 1.5rem;
+    color: var(--primary);
+    align-self: center;
+  }
+
+  /* ── Minimized card indicator ── */
+  .minimized-indicator {
+    font-size: 0.72rem;
+    color: var(--txt3);
+    font-style: italic;
+    padding: 8px 0;
+  }
+
+  @media (max-width: 900px) {
+    .flow { gap: 24px; }
+    .arrow-wrap { display: none; }
+    .thought-grid { grid-template-columns: 1fr; }
+    .hierarchy-flow { flex-direction: column; align-items: center; }
+    .hierarchy-arrow { transform: rotate(90deg); }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>BigText — Settings Module UX</h1>
+  <p>A comprehensive guide to the settings architecture, user flows, and interaction patterns</p>
+</div>
+
+<!-- ── Settings Architecture ───────────────────────────────────────────── -->
+<div class="arch-box">
+  <h2>Settings Architecture Overview</h2>
+  <div class="arch-grid">
+    <div class="arch-card">
+      <div class="arch-card-icon">🎨</div>
+      <h4>Display Mode</h4>
+      <p>Switch between Simple, Business, and Presentation modes. Each mode reveals different settings.</p>
+    </div>
+    <div class="arch-card">
+      <div class="arch-card-icon">🔤</div>
+      <h4>Typography</h4>
+      <p>Font family selection, font sizes for titles, subtitles, and company name.</p>
+      <span class="pro-tag">2/12 FREE</span>
+    </div>
+    <div class="arch-card">
+      <div class="arch-card-icon">🎨</div>
+      <h4>Colors</h4>
+      <p>Text color and background color. Free users get 3/12 colors each.</p>
+      <span class="pro-tag">3/12 FREE</span>
+    </div>
+    <div class="arch-card">
+      <div class="arch-card-icon">🖼️</div>
+      <h4>Branding</h4>
+      <p>Company name display, custom logo upload, logo positioning and scaling.</p>
+      <span class="pro-tag">PRO ONLY</span>
+    </div>
+    <div class="arch-card">
+      <div class="arch-card-icon">📐</div>
+      <h4>Layout</h4>
+      <p>Logo position (6 options), logo scale slider, responsive sizing.</p>
+      <span class="pro-tag">PRO ONLY</span>
+    </div>
+    <div class="arch-card">
+      <div class="arch-card-icon">⚡</div>
+      <h4>Preferences</h4>
+      <p>Haptic feedback, keep screen awake, auto-advance timing for presentations.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ── UX Principles ─────────────────────────────────────────────────── -->
+<div class="thought-box">
+  <h2>UX Design Principles</h2>
+  <div class="thought-grid">
+    <div class="thought-card bad">
+      <h4>Anti-Patterns to Avoid</h4>
+      <ul>
+        <li>Flat lists with no visual hierarchy</li>
+        <li>Hidden settings behind multiple taps</li>
+        <li>No preview of changes in real-time</li>
+        <li>Aggressive pro gating that frustrates users</li>
+        <li>Settings that don't persist across sessions</li>
+        <li>Unlabeled icons and confusing sliders</li>
+      </ul>
+    </div>
+    <div class="thought-card good">
+      <h4>Best Practices Applied</h4>
+      <ul>
+        <li>Grouped settings in collapsible card sections</li>
+        <li>Visual icons for quick scanning</li>
+        <li>Immediate preview of all changes</li>
+        <li>Soft pro gating — show, don't hide</li>
+        <li>Persistent state via Riverpod + local storage</li>
+        <li>Clear labels with descriptive values</li>
+      </ul>
+    </div>
+  </div>
+  <div class="rec-box">
+    <strong>Design Philosophy</strong>
+    Settings should feel like a creative tool, not a configuration panel. Users customize their display in real-time, seeing changes instantly. Pro features are visible but gently locked — creating desire without frustration. Cards are collapsible by default (except Display Mode) to reduce cognitive load.
+  </div>
+</div>
+
+<!-- ── Settings Screen Flow ─────────────────────────────────────────────── -->
+<div class="section-divider"><span>Settings Screen — Main Flow</span></div>
+
+<div class="flow">
+  <!-- Screen 1: Main Settings -->
+  <div class="screen-wrap">
+    <div class="step-num">1</div>
+    <div class="screen-label">Main Settings</div>
+    <div class="phone">
+      <div class="phone-notch"><div class="notch-pill"></div></div>
+      <div class="phone-screen">
+        <div class="status-bar"><span>10:25</span><span>●●● 📶 🔋</span></div>
+        <div class="app-bar">
+          <div class="app-bar-back">←</div>
+          <div class="app-bar-title">Settings</div>
+          <div style="width:20px;"></div>
+        </div>
+        <div class="screen-content">
+          <!-- Upgrade Banner -->
+          <div class="upgrade-banner">
+            <div class="upgrade-banner-icon">🚀</div>
+            <div class="upgrade-banner-text">
+              <h4>Upgrade to Pro</h4>
+              <p>Remove ads · unlock all features</p>
+            </div>
+            <div class="upgrade-banner-cta">→</div>
+          </div>
+
+          <!-- Display Mode Section (expanded by default) -->
+          <div class="section-card">
+            <div class="section-header">
+              <div class="section-title">Display Mode</div>
+            </div>
+            <div class="section-content">
+              <div class="mode-list">
+                <div class="mode-item active">
+                  <div class="mode-item-icon">👤</div>
+                  <div class="mode-item-label">Simple</div>
+                  <div class="mode-item-check">✓</div>
+                </div>
+                <div class="mode-item">
+                  <div class="mode-item-icon">📊</div>
+                  <div class="mode-item-label">Business</div>
+                  <div class="mode-item-lock">🔒</div>
+                </div>
+                <div class="mode-item">
+                  <div class="mode-item-icon">▶️</div>
+                  <div class="mode-item-label">Presentation</div>
+                  <div class="mode-item-lock">🔒</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Appearance Section (collapsed by default) -->
+          <div class="section-card">
+            <div class="section-header">
+              <div class="section-title">Appearance</div>
+              <div class="section-controls">
+                <span class="pro-badge">PRO</span>
+                <div class="collapse-btn">▼</div>
+              </div>
+            </div>
+            <div class="section-content collapsed">
+              <div class="minimized-indicator">Tap to expand...</div>
+            </div>
+          </div>
+
+          <!-- Display Options (collapsed by default) -->
+          <div class="section-card">
+            <div class="section-header">
+              <div class="section-title">Display Options</div>
+              <div class="section-controls">
+                <span class="pro-badge">PRO</span>
+                <div class="collapse-btn">▼</div>
+              </div>
+            </div>
+            <div class="section-content collapsed">
+              <div class="minimized-indicator">Tap to expand...</div>
+            </div>
+          </div>
+
+          <!-- Font Sizes (collapsed by default) -->
+          <div class="section-card">
+            <div class="section-header">
+              <div class="section-title">Font Sizes</div>
+              <div class="section-controls">
+                <div class="collapse-btn">▼</div>
+              </div>
+            </div>
+            <div class="section-content collapsed">
+              <div class="minimized-indicator">Tap to expand...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="font-size:0.7rem;color:var(--txt3);text-align:center;max-width:180px;margin-top:8px;">
+      Only Display Mode expanded by default. Other cards minimized.
+    </div>
+  </div>
+
+  <div class="arrow-wrap">
+    <div class="arrow">
+      <div style="display:flex;align-items:center;">
+        <div class="arrow-line"></div>
+        <div class="arrow-tip">▶</div>
+      </div>
+      <div class="arrow-desc">expand card</div>
+    </div>
+  </div>
+
+  <!-- Screen 2: Appearance Expanded -->
+  <div class="screen-wrap">
+    <div class="step-num">2</div>
+    <div class="screen-label">Appearance Expanded</div>
+    <div class="phone">
+      <div class="phone-notch"><div class="notch-pill"></div></div>
+      <div class="phone-screen">
+        <div class="status-bar"><span>10:25</span><span>●●● 📶 🔋</span></div>
+        <div class="app-bar">
+          <div class="app-bar-back">←</div>
+          <div class="app-bar-title">Settings</div>
+          <div style="width:20px;"></div>
+        </div>
+        <div class="screen-content">
+          <!-- Appearance Section (expanded) -->
+          <div class="section-card">
+            <div class="section-header">
+              <div class="section-title">Appearance</div>
+              <div class="section-controls">
+                <span class="pro-badge">PRO</span>
+                <div class="collapse-btn expanded">▼</div>
+              </div>
+            </div>
+            <div class="section-content">
+              <!-- Font -->
+              <div class="setting-row">
+                <div class="setting-row-content">
+                  <div class="setting-row-label">Font</div>
+                </div>
+                <div class="setting-row-value">2 / 12</div>
+              </div>
+              <div class="font-dropdown">
+                <div class="font-dropdown-value">Inter</div>
+                <div class="font-dropdown-icon">▼</div>
+              </div>
+
+              <div style="height:16px;"></div>
+
+              <!-- Text Color -->
+              <div class="setting-row" style="border-bottom:none;padding-bottom:8px;">
+                <div class="setting-row-content">
+                  <div class="setting-row-label">Text Color</div>
+                </div>
+                <div class="setting-row-value">3 / 12</div>
+              </div>
+              <div class="color-grid">
+                <div class="color-swatch white selected"></div>
+                <div class="color-swatch black"></div>
+                <div class="color-swatch red"></div>
+                <div class="color-swatch orange locked"></div>
+                <div class="color-swatch green locked"></div>
+                <div class="color-swatch yellow locked"></div>
+              </div>
+
+              <div style="height:16px;"></div>
+
+              <!-- Background Color -->
+              <div class="setting-row" style="border-bottom:none;padding-bottom:8px;">
+                <div class="setting-row-content">
+                  <div class="setting-row-label">Background Color</div>
+                </div>
+                <div class="setting-row-value">3 / 12</div>
+              </div>
+              <div class="color-grid">
+                <div class="color-swatch white"></div>
+                <div class="color-swatch black selected"></div>
+                <div class="color-swatch red"></div>
+                <div class="color-swatch blue locked"></div>
+                <div class="color-swatch purple locked"></div>
+                <div class="color-swatch teal locked"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="font-size:0.7rem;color:var(--txt3);text-align:center;max-width:180px;margin-top:8px;">
+      PRO badge on title. Colors as soft rounded rects with vibrant borders.
+    </div>
+  </div>
+
+  <div class="arrow-wrap">
+    <div class="arrow">
+      <div style="display:flex;align-items:center;">
+        <div class="arrow-line"></div>
+        <div class="arrow-tip">▶</div>
+      </div>
+      <div class="arrow-desc">more options</div>
+    </div>
+  </div>
+
+  <!-- Screen 3: Display Options & Preferences -->
+  <div class="screen-wrap">
+    <div class="step-num">3</div>
+    <div class="screen-label">Options & Preferences</div>
+    <div class="phone">
+      <div class="phone-notch"><div class="notch-pill"></div></div>
+      <div class="phone-screen">
+        <div class="status-bar"><span>10:25</span><span>●●● 📶 🔋</span></div>
+        <div class="app-bar">
+          <div class="app-bar-back">←</div>
+          <div class="app-bar-title">Settings</div>
+          <div style="width:20px;"></div>
+        </div>
+        <div class="screen-content">
+          <!-- Display Options Section (expanded) -->
+          <div class="section-card">
+            <div class="section-header">
+              <div class="section-title">Display Options</div>
+              <div class="section-controls">
+                <span class="pro-badge">PRO</span>
+                <div class="collapse-btn expanded">▼</div>
+              </div>
+            </div>
+            <div class="section-content">
+              <div class="setting-row">
+                <div class="setting-row-content">
+                  <div class="setting-row-label">Show Company Name</div>
+                </div>
+                <div class="toggle"></div>
+              </div>
+              <div class="setting-row">
+                <div class="setting-row-content">
+                  <div class="setting-row-label">Show Logo</div>
+                </div>
+                <div class="toggle"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Font Sizes Section (expanded) -->
+          <div class="section-card">
+            <div class="section-header">
+              <div class="section-title">Font Sizes</div>
+              <div class="section-controls">
+                <div class="collapse-btn expanded">▼</div>
+              </div>
+            </div>
+            <div class="section-content">
+              <div class="slider-row">
+                <div class="slider-header">
+                  <span class="slider-label">Company Name Size</span>
+                  <span class="slider-value">24</span>
+                </div>
+                <div class="slider-track">
+                  <div class="slider-fill" style="width:35%;"></div>
+                  <div class="slider-thumb" style="left:32%;"></div>
+                </div>
+              </div>
+              <div class="slider-row">
+                <div class="slider-header">
+                  <span class="slider-label">Passenger Name Size</span>
+                  <span class="slider-value">100</span>
+                </div>
+                <div class="slider-track">
+                  <div class="slider-fill" style="width:55%;"></div>
+                  <div class="slider-thumb" style="left:52%;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Preferences Section (expanded) -->
+          <div class="section-card">
+            <div class="section-header">
+              <div class="section-title">Preferences</div>
+              <div class="section-controls">
+                <div class="collapse-btn expanded">▼</div>
+              </div>
+            </div>
+            <div class="section-content">
+              <div class="setting-row">
+                <div class="setting-row-content">
+                  <div class="setting-row-label">Haptic Feedback</div>
+                </div>
+                <div class="toggle on"></div>
+              </div>
+              <div class="setting-row">
+                <div class="setting-row-content">
+                  <div class="setting-row-label">Keep Screen Awake</div>
+                </div>
+                <div class="toggle on"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="font-size:0.7rem;color:var(--txt3);text-align:center;max-width:180px;margin-top:8px;">
+      Toggle ON state uses primary color (#123768)
+    </div>
+  </div>
+</div>
+
+<!-- ── Color Swatch Design Detail ─────────────────────────────────────────────── -->
+<div class="section-divider"><span>Color Swatch Design</span></div>
+
+<div class="thought-box">
+  <h2>Color Swatch Styling</h2>
+  <div class="thought-grid">
+    <div class="thought-card">
+      <h4>Design Approach</h4>
+      <ul>
+        <li>Rounded rectangle shape (12px border-radius)</li>
+        <li>Soft/pastel fill colors for the interior</li>
+        <li>Vibrant border color matching the hue</li>
+        <li>2px border width for clear definition</li>
+        <li>Lock icon overlay for pro-only colors</li>
+        <li>Checkmark for selected state</li>
+      </ul>
+    </div>
+    <div class="thought-card">
+      <h4>Example Colors</h4>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px;">
+        <div class="color-swatch white" style="width:40px;height:40px;"></div>
+        <div class="color-swatch red" style="width:40px;height:40px;"></div>
+        <div class="color-swatch green" style="width:40px;height:40px;"></div>
+        <div class="color-swatch blue" style="width:40px;height:40px;"></div>
+        <div class="color-swatch purple" style="width:40px;height:40px;"></div>
+        <div class="color-swatch pink" style="width:40px;height:40px;"></div>
+        <div class="color-swatch yellow" style="width:40px;height:40px;"></div>
+        <div class="color-swatch teal" style="width:40px;height:40px;"></div>
+      </div>
+    </div>
+  </div>
+  <div class="rec-box">
+    <strong>Soft Fill + Vibrant Border Pattern</strong>
+    Each color swatch uses a soft pastel version for the fill (e.g., #fecaca for red) while the border uses the vibrant/saturated color (e.g., #ef4444 for red). This creates visual harmony while maintaining color identification.
+  </div>
+</div>
+
+<!-- ── Card Collapse Behavior ─────────────────────────────────────────────── -->
+<div class="interaction-table">
+  <div class="interaction-table-header">
+    <h2>Card Collapse Behavior</h2>
+    <p>Default states and expand/collapse functionality</p>
+  </div>
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Card Section</th>
+        <th>Default State</th>
+        <th>Has PRO Badge</th>
+        <th>Collapse Button</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Display Mode</strong></td>
+        <td><span class="badge badge-green">Expanded</span></td>
+        <td>No (on items)</td>
+        <td>None (always visible)</td>
+      </tr>
+      <tr>
+        <td><strong>Appearance</strong></td>
+        <td><span class="badge badge-amber">Minimized</span></td>
+        <td><span class="badge badge-primary">Yes (title)</span></td>
+        <td>Top-right corner</td>
+      </tr>
+      <tr>
+        <td><strong>Display Options</strong></td>
+        <td><span class="badge badge-amber">Minimized</span></td>
+        <td><span class="badge badge-primary">Yes (title)</span></td>
+        <td>Top-right corner</td>
+      </tr>
+      <tr>
+        <td><strong>Font Sizes</strong></td>
+        <td><span class="badge badge-amber">Minimized</span></td>
+        <td>No</td>
+        <td>Top-right corner</td>
+      </tr>
+      <tr>
+        <td><strong>Logo Position</strong></td>
+        <td><span class="badge badge-amber">Minimized</span></td>
+        <td><span class="badge badge-primary">Yes (title)</span></td>
+        <td>Top-right corner</td>
+      </tr>
+      <tr>
+        <td><strong>Preferences</strong></td>
+        <td><span class="badge badge-amber">Minimized</span></td>
+        <td>No</td>
+        <td>Top-right corner</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ── Interaction Patterns Table ─────────────────────────────────────────────── -->
+<div class="interaction-table">
+  <div class="interaction-table-header">
+    <h2>Interaction Patterns</h2>
+    <p>How users interact with each setting type</p>
+  </div>
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>Setting Type</th>
+        <th>Input Method</th>
+        <th>Feedback</th>
+        <th>Persistence</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Display Mode</strong></td>
+        <td>Card tap (3 options, no description)</td>
+        <td>Immediate mode switch, shows/hides relevant settings</td>
+        <td><span class="badge badge-green">Auto-saved</span></td>
+      </tr>
+      <tr>
+        <td><strong>Card Collapse</strong></td>
+        <td>Tap collapse button (▼)</td>
+        <td>Smooth expand/collapse animation</td>
+        <td><span class="badge badge-primary">Session only</span></td>
+      </tr>
+      <tr>
+        <td><strong>Font Family</strong></td>
+        <td>Dropdown selection</td>
+        <td>Real-time preview in name display</td>
+        <td><span class="badge badge-green">Auto-saved</span></td>
+      </tr>
+      <tr>
+        <td><strong>Colors</strong></td>
+        <td>Rounded rect swatch tap</td>
+        <td>Instant color change with live preview</td>
+        <td><span class="badge badge-green">Auto-saved</span></td>
+      </tr>
+      <tr>
+        <td><strong>Font Sizes</strong></td>
+        <td>Horizontal slider</td>
+        <td>Value badge updates + haptic on iOS</td>
+        <td><span class="badge badge-green">Auto-saved</span></td>
+      </tr>
+      <tr>
+        <td><strong>Toggles</strong></td>
+        <td>Switch (on/off)</td>
+        <td>Primary color (#123768) when ON</td>
+        <td><span class="badge badge-green">Auto-saved</span></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ── Key Design Changes Summary ─────────────────────────────────────────────── -->
+<div class="arch-box">
+  <h2>Key Design Changes Summary</h2>
+  <div class="arch-grid">
+    <div class="arch-card">
+      <div class="arch-card-icon">🎯</div>
+      <h4>Display Mode</h4>
+      <p>No descriptions. Bold titles matching "Upgrade to Pro" text. No PRO badges on mode cards.</p>
+    </div>
+    <div class="arch-card">
+      <div class="arch-card-icon">🎨</div>
+      <h4>Primary Color</h4>
+      <p>Changed from purple to #123768 (dark blue) throughout the interface.</p>
+    </div>
+    <div class="arch-card">
+      <div class="arch-card-icon">🏷️</div>
+      <h4>PRO Badge Position</h4>
+      <p>Moved to card title (right side) instead of on individual rows.</p>
+    </div>
+    <div class="arch-card">
+      <div class="arch-card-icon">🟦</div>
+      <h4>Color Swatches</h4>
+      <p>Rounded rectangles with soft pastel fill and vibrant border colors.</p>
+    </div>
+    <div class="arch-card">
+      <div class="arch-card-icon">📂</div>
+      <h4>Collapsible Cards</h4>
+      <p>Min/max button top-right. Default minimized except Display Mode.</p>
+    </div>
+    <div class="arch-card">
+      <div class="arch-card-icon">🔘</div>
+      <h4>Toggle Color</h4>
+      <p>Enabled state uses primary color (#123768) correctly.</p>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

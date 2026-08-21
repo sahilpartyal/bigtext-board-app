@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BigText — Purchase Flow UX</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f0f2f5;
+    --blue: #2563eb;
+    --blue-dk: #1d4ed8;
+    --blue-lt: #eff4ff;
+    --purple: #7c3aed;
+    --green: #16a34a;
+    --amber: #d97706;
+    --red: #dc2626;
+    --txt1: #0d1829;
+    --txt2: #4a5568;
+    --txt3: #94a3b8;
+    --border: #e2e8f0;
+    --surface: #ffffff;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    min-height: 100vh;
+    padding: 40px 20px 80px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Page header ── */
+  .page-header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+  .page-header h1 {
+    font-size: 1.6rem; font-weight: 800;
+    color: var(--txt1); letter-spacing: -0.03em;
+    margin-bottom: 6px;
+  }
+  .page-header p { color: var(--txt2); font-size: 0.9rem; }
+
+  /* ── Flow row ── */
+  .flow {
+    display: flex;
+    align-items: flex-start;
+    gap: 0;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  /* ── Screen wrapper ── */
+  .screen-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .screen-label {
+    font-size: 0.72rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--txt3);
+  }
+
+  .step-num {
+    width: 26px; height: 26px; border-radius: 50%;
+    background: var(--blue); color: #fff;
+    font-size: 0.75rem; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* ── Arrow between screens ── */
+  .arrow-wrap {
+    display: flex;
+    align-items: center;
+    padding: 0 4px;
+    margin-top: 80px;
+  }
+
+  .arrow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .arrow-line {
+    width: 36px; height: 2px;
+    background: linear-gradient(90deg, var(--blue), var(--purple));
+    border-radius: 2px;
+  }
+
+  .arrow-tip {
+    font-size: 1rem; color: var(--purple);
+    margin-left: -4px;
+    line-height: 1;
+  }
+
+  .arrow-desc {
+    font-size: 0.65rem; color: var(--txt3);
+    font-weight: 600; text-align: center;
+    max-width: 60px; margin-top: 4px;
+  }
+
+  /* ── Phone frame ── */
+  .phone {
+    width: 240px;
+    background: var(--surface);
+    border-radius: 28px;
+    overflow: hidden;
+    box-shadow:
+      0 0 0 8px #1a1a2e,
+      0 20px 60px rgba(0,0,0,0.25);
+    position: relative;
+  }
+
+  .phone-notch {
+    background: #1a1a2e;
+    height: 28px;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .notch-pill {
+    width: 70px; height: 8px;
+    background: #0a0a14;
+    border-radius: 999px;
+  }
+
+  .phone-screen {
+    background: #f8fafc;
+    min-height: 420px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* ── Status bar ── */
+  .status-bar {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 6px 14px;
+    background: var(--surface);
+    font-size: 0.65rem; font-weight: 600; color: var(--txt2);
+  }
+
+  /* ── App bar ── */
+  .app-bar {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 14px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .app-bar-back {
+    font-size: 0.75rem; color: var(--blue); font-weight: 600;
+  }
+
+  .app-bar-title {
+    font-size: 0.85rem; font-weight: 700;
+    flex: 1; text-align: center;
+  }
+
+  .app-bar-action {
+    font-size: 0.72rem; color: var(--blue); font-weight: 600;
+  }
+
+  /* ── Screen content ── */
+  .screen-content { padding: 12px 14px; }
+
+  /* ── Settings rows ── */
+  .settings-section-title {
+    font-size: 0.6rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--txt3); margin: 10px 0 6px;
+  }
+
+  .settings-row {
+    display: flex; align-items: center; gap: 8px;
+    padding: 9px 10px;
+    background: var(--surface);
+    border-radius: 8px;
+    margin-bottom: 4px;
+    border: 1px solid var(--border);
+  }
+
+  .settings-row-icon {
+    font-size: 0.9rem;
+  }
+
+  .settings-row-label {
+    font-size: 0.75rem; font-weight: 500;
+    flex: 1; color: var(--txt1);
+  }
+
+  .settings-row-value {
+    font-size: 0.68rem; color: var(--txt3);
+  }
+
+  .lock-badge {
+    background: #fef3c7;
+    border: 1px solid #fde68a;
+    color: var(--amber);
+    font-size: 0.55rem; font-weight: 700;
+    padding: 2px 5px; border-radius: 4px;
+    text-transform: uppercase;
+  }
+
+  /* ── Mode cards ── */
+  .mode-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 5px; margin-bottom: 4px;
+  }
+
+  .mode-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 4px;
+    text-align: center;
+    position: relative;
+    cursor: pointer;
+  }
+
+  .mode-card.active {
+    border-color: var(--blue);
+    background: var(--blue-lt);
+  }
+
+  .mode-card.locked {
+    opacity: 0.65;
+  }
+
+  .mode-card-icon { font-size: 1rem; margin-bottom: 2px; }
+
+  .mode-card-label {
+    font-size: 0.6rem; font-weight: 600; color: var(--txt2);
+  }
+
+  .mode-lock {
+    position: absolute; top: 3px; right: 3px;
+    font-size: 0.55rem;
+  }
+
+  /* ── Pro badge inline ── */
+  .pro-pill {
+    background: linear-gradient(135deg, #f59e0b, #ef4444);
+    color: #fff; font-size: 0.5rem; font-weight: 800;
+    padding: 2px 5px; border-radius: 999px;
+    letter-spacing: 0.04em;
+  }
+
+  /* ── Upgrade banner ── */
+  .upgrade-banner {
+    background: linear-gradient(135deg, var(--blue), var(--purple));
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+    display: flex; align-items: center; gap: 8px;
+    cursor: pointer;
+  }
+
+  .upgrade-banner-text h4 {
+    font-size: 0.75rem; font-weight: 700; color: #fff;
+    margin-bottom: 2px;
+  }
+
+  .upgrade-banner-text p {
+    font-size: 0.6rem; color: rgba(255,255,255,0.75);
+  }
+
+  .upgrade-banner-cta {
+    margin-left: auto;
+    background: rgba(255,255,255,0.2);
+    color: #fff; font-size: 0.6rem; font-weight: 700;
+    padding: 4px 8px; border-radius: 5px;
+    white-space: nowrap;
+  }
+
+  /* ── Bottom sheet ── */
+  .bottom-sheet-overlay {
+    position: absolute; inset: 0;
+    background: rgba(0,0,0,0.45);
+    display: flex; align-items: flex-end;
+    z-index: 10;
+  }
+
+  .bottom-sheet {
+    background: var(--surface);
+    border-radius: 16px 16px 0 0;
+    padding: 14px;
+    width: 100%;
+  }
+
+  .sheet-handle {
+    width: 32px; height: 3px;
+    background: var(--border);
+    border-radius: 999px;
+    margin: 0 auto 12px;
+  }
+
+  .sheet-title {
+    font-size: 0.85rem; font-weight: 800;
+    text-align: center; margin-bottom: 2px;
+    color: var(--txt1);
+  }
+
+  .sheet-sub {
+    font-size: 0.65rem; color: var(--txt3);
+    text-align: center; margin-bottom: 12px;
+  }
+
+  .sheet-features {
+    background: #f8fafc;
+    border-radius: 8px;
+    padding: 8px 10px;
+    margin-bottom: 10px;
+  }
+
+  .sheet-feature {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 0.65rem; color: var(--txt2);
+    padding: 3px 0;
+    font-weight: 500;
+  }
+
+  .sheet-feature::before {
+    content: '✓';
+    color: var(--green);
+    font-weight: 800;
+    font-size: 0.65rem;
+  }
+
+  .sheet-btn {
+    background: linear-gradient(135deg, var(--blue), var(--purple));
+    color: #fff; border: none;
+    border-radius: 10px; padding: 11px;
+    font-size: 0.78rem; font-weight: 700;
+    width: 100%; text-align: center;
+    cursor: pointer; margin-bottom: 6px;
+  }
+
+  .sheet-secondary {
+    text-align: center; font-size: 0.6rem;
+    color: var(--blue); font-weight: 600;
+  }
+
+  /* ── Subscription screen ── */
+  .sub-header {
+    text-align: center; padding: 14px 12px 10px;
+    background: linear-gradient(160deg, #1e1b4b 0%, #312e81 100%);
+  }
+
+  .sub-header-emoji { font-size: 1.6rem; margin-bottom: 4px; }
+
+  .sub-header h3 {
+    font-size: 0.95rem; font-weight: 800;
+    color: #fff; margin-bottom: 2px;
+  }
+
+  .sub-header p {
+    font-size: 0.65rem; color: rgba(255,255,255,0.7);
+  }
+
+  .plan-cards {
+    padding: 10px 12px 0;
+    display: flex; gap: 5px;
+  }
+
+  .plan-card {
+    flex: 1; background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: 10px; padding: 8px 5px;
+    text-align: center; cursor: pointer;
+    transition: all 0.15s;
+    position: relative;
+  }
+
+  .plan-card.selected {
+    border-color: var(--blue);
+    background: var(--blue-lt);
+  }
+
+  .plan-card .pop-label {
+    position: absolute; top: -8px; left: 50%;
+    transform: translateX(-50%);
+    background: var(--blue); color: #fff;
+    font-size: 0.48rem; font-weight: 800;
+    padding: 2px 7px; border-radius: 999px;
+    white-space: nowrap; text-transform: uppercase;
+  }
+
+  .plan-card .plan-name {
+    font-size: 0.6rem; font-weight: 700;
+    color: var(--txt2); margin-bottom: 3px;
+    text-transform: uppercase; letter-spacing: 0.04em;
+  }
+
+  .plan-card .plan-price {
+    font-size: 1.05rem; font-weight: 800;
+    color: var(--txt1); line-height: 1;
+  }
+
+  .plan-card.selected .plan-price { color: var(--blue); }
+
+  .plan-card .plan-period {
+    font-size: 0.52rem; color: var(--txt3);
+    margin-top: 1px;
+  }
+
+  .plan-card .plan-save {
+    font-size: 0.52rem; color: var(--green);
+    font-weight: 700; margin-top: 3px;
+  }
+
+  .sub-features {
+    padding: 10px 12px;
+  }
+
+  .sub-features-title {
+    font-size: 0.62rem; font-weight: 700;
+    color: var(--txt3); text-transform: uppercase;
+    letter-spacing: 0.06em; margin-bottom: 6px;
+  }
+
+  .sub-feature-row {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 0.65rem; color: var(--txt2);
+    font-weight: 500; padding: 3px 0;
+  }
+
+  .sub-feature-icon { font-size: 0.7rem; }
+
+  .cta-wrap { padding: 0 12px 8px; }
+
+  .cta-btn {
+    background: linear-gradient(135deg, var(--blue), var(--purple));
+    color: #fff; border: none; border-radius: 10px;
+    padding: 11px; font-size: 0.78rem; font-weight: 700;
+    width: 100%; text-align: center; cursor: pointer;
+    margin-bottom: 5px;
+  }
+
+  .cta-legal {
+    text-align: center; font-size: 0.52rem;
+    color: var(--txt3);
+  }
+
+  /* ── Success screen ── */
+  .success-screen {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    min-height: 380px; padding: 20px;
+    text-align: center;
+    background: linear-gradient(160deg, #f0fdf4 0%, #dcfce7 100%);
+  }
+
+  .success-emoji {
+    font-size: 3rem; margin-bottom: 12px;
+    animation: bounce 0.6s ease;
+  }
+
+  @keyframes bounce {
+    0%   { transform: scale(0.5); opacity: 0; }
+    70%  { transform: scale(1.1); }
+    100% { transform: scale(1);   opacity: 1; }
+  }
+
+  .success-title {
+    font-size: 1.1rem; font-weight: 800;
+    color: var(--txt1); margin-bottom: 4px;
+  }
+
+  .success-sub {
+    font-size: 0.72rem; color: var(--txt2);
+    margin-bottom: 16px; line-height: 1.5;
+  }
+
+  .success-unlocked {
+    background: var(--surface);
+    border-radius: 10px; padding: 10px 14px;
+    width: 100%; margin-bottom: 14px;
+    border: 1px solid #bbf7d0;
+  }
+
+  .success-unlocked-title {
+    font-size: 0.6rem; font-weight: 700;
+    color: var(--green); text-transform: uppercase;
+    letter-spacing: 0.06em; margin-bottom: 7px;
+  }
+
+  .success-unlock-item {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 0.65rem; color: var(--txt2);
+    font-weight: 500; padding: 2px 0;
+  }
+
+  .success-unlock-item::before {
+    content: '✓'; color: var(--green); font-weight: 800;
+  }
+
+  .success-btn {
+    background: var(--green); color: #fff;
+    border: none; border-radius: 10px;
+    padding: 11px 24px; font-size: 0.8rem;
+    font-weight: 700; cursor: pointer; width: 100%;
+  }
+
+  /* ── Ad banner ── */
+  .ad-banner {
+    background: #f0f0f0;
+    border-top: 1px solid var(--border);
+    padding: 8px;
+    text-align: center;
+    font-size: 0.58rem; color: var(--txt3);
+    font-weight: 500;
+  }
+
+  .ad-banner span {
+    background: var(--border);
+    padding: 2px 6px; border-radius: 3px;
+    font-size: 0.52rem; font-weight: 700;
+    color: var(--txt3); margin-right: 4px;
+  }
+
+  /* ── Section divider label ── */
+  .section-divider {
+    text-align: center;
+    margin: 40px 0 32px;
+    position: relative;
+  }
+
+  .section-divider::before {
+    content: '';
+    position: absolute; top: 50%; left: 0; right: 0;
+    height: 1px; background: var(--border);
+  }
+
+  .section-divider span {
+    background: var(--bg);
+    padding: 0 16px;
+    position: relative;
+    font-size: 0.78rem; font-weight: 700;
+    color: var(--txt2);
+  }
+
+  /* ── Thought box ── */
+  .thought-box {
+    max-width: 860px; margin: 0 auto 40px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px; padding: 28px 32px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+
+  .thought-box h2 {
+    font-size: 1rem; font-weight: 800;
+    margin-bottom: 16px; color: var(--txt1);
+  }
+
+  .thought-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .thought-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px; padding: 16px;
+  }
+
+  .thought-card h4 {
+    font-size: 0.82rem; font-weight: 700;
+    margin-bottom: 8px; display: flex;
+    align-items: center; gap: 6px;
+  }
+
+  .thought-card ul {
+    list-style: none; padding: 0;
+  }
+
+  .thought-card li {
+    font-size: 0.8rem; color: var(--txt2);
+    padding: 3px 0; display: flex;
+    align-items: flex-start; gap: 6px;
+  }
+
+  .thought-card li::before {
+    content: '•'; color: var(--blue);
+    font-weight: 800; flex-shrink: 0;
+  }
+
+  .thought-card.bad li::before { content: '✗'; color: var(--red); }
+  .thought-card.good li::before { content: '✓'; color: var(--green); }
+
+  .rec-box {
+    background: var(--blue-lt);
+    border: 1px solid #bfdbfe;
+    border-radius: 10px; padding: 14px 16px;
+    font-size: 0.82rem; color: #1e40af;
+    line-height: 1.6;
+  }
+
+  .rec-box strong { font-weight: 700; display: block; margin-bottom: 4px; }
+
+  /* ── Trigger table ── */
+  .trigger-table {
+    max-width: 860px; margin: 0 auto 40px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px; overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+
+  .trigger-table-header {
+    padding: 20px 24px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .trigger-table-header h2 {
+    font-size: 1rem; font-weight: 800; color: var(--txt1);
+  }
+
+  .trigger-table-header p {
+    font-size: 0.82rem; color: var(--txt2); margin-top: 3px;
+  }
+
+  .tbl { width: 100%; border-collapse: collapse; }
+  .tbl th, .tbl td {
+    padding: 11px 20px; text-align: left;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.82rem;
+  }
+  .tbl th {
+    background: #f8fafc;
+    font-size: 0.68rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.06em;
+    color: var(--txt3);
+  }
+  .tbl tr:last-child td { border-bottom: none; }
+  .tbl tbody tr:hover td { background: var(--blue-lt); }
+
+  .trigger-dot {
+    display: inline-block; width: 8px; height: 8px;
+    border-radius: 50%; margin-right: 6px;
+  }
+
+  @media (max-width: 700px) {
+    .flow { gap: 20px; }
+    .arrow-wrap { display: none; }
+    .thought-row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>BigText — Purchase Flow UX</h1>
+  <p>How a user discovers, considers, and buys Pro</p>
+</div>
+
+<!-- ── Strategy box ───────────────────────────────────────────── -->
+<div class="thought-box">
+  <h2>💡 Strategy — One Plan, Everything Included</h2>
+  <div class="thought-row">
+    <div class="thought-card bad">
+      <h4>❌ Selling modes separately</h4>
+      <ul>
+        <li>Users confused — "which plan do I need?"</li>
+        <li>More screens = more drop-off</li>
+        <li>Lower revenue per user</li>
+        <li>Support nightmare — "why can't I use business mode?"</li>
+      </ul>
+    </div>
+    <div class="thought-card good">
+      <h4>✅ One Pro plan (bundles everything)</h4>
+      <ul>
+        <li>Simple decision — free or pro</li>
+        <li>Both modes + fonts + colors + no ads in one buy</li>
+        <li>Higher perceived value</li>
+        <li>Faster checkout = better conversion</li>
+      </ul>
+    </div>
+  </div>
+  <div class="rec-box">
+    <strong>Recommendation</strong>
+    One Pro subscription unlocks Business mode, Presentation mode, all fonts, all colors, custom logo, and removes ads — all in a single purchase. Users don't need to think. The only question they ask is "is Pro worth it?" and the answer is obvious.
+  </div>
+</div>
+
+<!-- ── Purchase flow screens ──────────────────────────────────── -->
+<div class="section-divider"><span>Purchase Flow — 4 Screens</span></div>
+
+<div class="flow">
+
+  <!-- Screen 1: Settings (free user) -->
+  <div class="screen-wrap">
+    <div class="step-num">1</div>
+    <div class="screen-label">Settings (Free User)</div>
+    <div class="phone">
+      <div class="phone-notch"><div class="notch-pill"></div></div>
+      <div class="phone-screen">
+        <div class="status-bar"><span>9:41</span><span>●●●</span></div>
+        <div class="app-bar">
+          <div class="app-bar-title">Settings</div>
+        </div>
+        <div class="screen-content">
+
+          <!-- Upgrade banner -->
+          <div class="upgrade-banner">
+            <div>⭐</div>
+            <div class="upgrade-banner-text">
+              <h4>Upgrade to Pro</h4>
+              <p>Remove ads · unlock everything</p>
+            </div>
+            <div class="upgrade-banner-cta">View →</div>
+          </div>
+
+          <!-- Display mode -->
+          <div class="settings-section-title">Display Mode</div>
+          <div class="mode-grid">
+            <div class="mode-card active">
+              <div class="mode-card-icon">📝</div>
+              <div class="mode-card-label">Simple</div>
+            </div>
+            <div class="mode-card">
+              <div class="mode-card-icon">💼</div>
+              <div class="mode-card-label">Business</div>
+            </div>
+            <div class="mode-card">
+              <div class="mode-card-icon">🎤</div>
+              <div class="mode-card-label">Present</div>
+            </div>
+          </div>
+
+          <!-- Font -->
+          <div class="settings-section-title">Appearance</div>
+          <div class="settings-row">
+            <div class="settings-row-icon">🔤</div>
+            <div class="settings-row-label">Font Family</div>
+            <div class="settings-row-value">Inter</div>
+            <div class="settings-row-value">›</div>
+          </div>
+          <div class="settings-row">
+            <div class="settings-row-icon">🎨</div>
+            <div class="settings-row-label">Colors</div>
+            <div class="settings-row-value">6 / 12</div>
+            <div class="settings-row-value">›</div>
+          </div>
+          <div class="settings-row">
+            <div class="settings-row-icon">🖼️</div>
+            <div class="settings-row-label">Custom Logo</div>
+            <div class="lock-badge">PRO</div>
+          </div>
+
+        </div>
+        <div class="ad-banner"><span>AD</span> Google AdMob banner</div>
+      </div>
+    </div>
+    <div style="font-size:0.7rem;color:var(--txt3);text-align:center;max-width:140px;">User sees upgrade banner + ad at bottom</div>
+  </div>
+
+  <!-- Arrow 1→2 -->
+  <div class="arrow-wrap">
+    <div class="arrow">
+      <div style="display:flex;align-items:center;">
+        <div class="arrow-line"></div>
+        <div class="arrow-tip">▶</div>
+      </div>
+      <div class="arrow-desc">taps locked feature or "View →"</div>
+    </div>
+  </div>
+
+  <!-- Screen 2: Bottom sheet prompt -->
+  <div class="screen-wrap">
+    <div class="step-num">2</div>
+    <div class="screen-label">Quick Upgrade Prompt</div>
+    <div class="phone">
+      <div class="phone-notch"><div class="notch-pill"></div></div>
+      <div class="phone-screen" style="position:relative;">
+        <div class="status-bar"><span>9:41</span><span>●●●</span></div>
+        <div class="app-bar">
+          <div class="app-bar-title">Settings</div>
+        </div>
+        <div class="screen-content" style="opacity:0.3;">
+          <div class="upgrade-banner" style="background:#ddd;">
+            <div class="upgrade-banner-text">
+              <h4 style="color:#999;">Upgrade to Pro</h4>
+            </div>
+          </div>
+          <div class="mode-grid">
+            <div class="mode-card active"><div class="mode-card-icon">📝</div><div class="mode-card-label">Simple</div></div>
+            <div class="mode-card"><div class="mode-card-icon">💼</div><div class="mode-card-label">Business</div></div>
+            <div class="mode-card"><div class="mode-card-icon">🎤</div><div class="mode-card-label">Present</div></div>
+          </div>
+        </div>
+
+        <!-- Bottom sheet -->
+        <div class="bottom-sheet-overlay">
+          <div class="bottom-sheet">
+            <div class="sheet-handle"></div>
+            <div class="sheet-title">⭐ Go Pro</div>
+            <div class="sheet-sub">Unlock everything in one purchase</div>
+            <div class="sheet-features">
+              <div class="sheet-feature">Business &amp; Presentation modes</div>
+              <div class="sheet-feature">All 12 fonts + 12 colors</div>
+              <div class="sheet-feature">Custom logo upload</div>
+              <div class="sheet-feature">No ads, ever</div>
+            </div>
+            <div class="sheet-btn">See Plans — from $0.99/mo</div>
+            <div class="sheet-secondary">Maybe later</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="font-size:0.7rem;color:var(--txt3);text-align:center;max-width:140px;">Bottom sheet slides up — quick preview of what they get</div>
+  </div>
+
+  <!-- Arrow 2→3 -->
+  <div class="arrow-wrap">
+    <div class="arrow">
+      <div style="display:flex;align-items:center;">
+        <div class="arrow-line"></div>
+        <div class="arrow-tip">▶</div>
+      </div>
+      <div class="arrow-desc">taps "See Plans"</div>
+    </div>
+  </div>
+
+  <!-- Screen 3: Subscription screen -->
+  <div class="screen-wrap">
+    <div class="step-num">3</div>
+    <div class="screen-label">Subscription Screen</div>
+    <div class="phone">
+      <div class="phone-notch"><div class="notch-pill"></div></div>
+      <div class="phone-screen">
+        <div class="status-bar" style="background:#1e1b4b;color:rgba(255,255,255,0.6);"><span>9:41</span><span>●●●</span></div>
+        <div class="app-bar" style="background:#1e1b4b;border-color:rgba(255,255,255,0.1);">
+          <div class="app-bar-back" style="color:rgba(255,255,255,0.7);">✕</div>
+          <div class="app-bar-title" style="color:#fff;">BigText Pro</div>
+          <div class="app-bar-action" style="color:rgba(255,255,255,0.6);font-size:0.62rem;">Restore</div>
+        </div>
+
+        <div class="sub-header">
+          <div class="sub-header-emoji">🚀</div>
+          <h3>Unlock BigText Pro</h3>
+          <p>Remove ads · all modes · all fonts · all colors</p>
+        </div>
+
+        <div class="plan-cards">
+          <div class="plan-card">
+            <div class="plan-name">Monthly</div>
+            <div class="plan-price">$0.99</div>
+            <div class="plan-period">/month</div>
+          </div>
+          <div class="plan-card selected">
+            <div class="pop-label">Best Value</div>
+            <div class="plan-name">Yearly</div>
+            <div class="plan-price">$4.99</div>
+            <div class="plan-period">/year</div>
+            <div class="plan-save">Save 58%</div>
+          </div>
+          <div class="plan-card">
+            <div class="plan-name">Lifetime</div>
+            <div class="plan-price">$14.99</div>
+            <div class="plan-period">once</div>
+          </div>
+        </div>
+
+        <div class="sub-features">
+          <div class="sub-features-title">Everything included</div>
+          <div class="sub-feature-row"><span class="sub-feature-icon">💼</span> Business mode</div>
+          <div class="sub-feature-row"><span class="sub-feature-icon">🎤</span> Presentation mode</div>
+          <div class="sub-feature-row"><span class="sub-feature-icon">🔤</span> All 12 font families</div>
+          <div class="sub-feature-row"><span class="sub-feature-icon">🎨</span> All colors + custom</div>
+          <div class="sub-feature-row"><span class="sub-feature-icon">🚫</span> No advertisements</div>
+        </div>
+
+        <div class="cta-wrap">
+          <div class="cta-btn">Continue with Yearly — $4.99</div>
+          <div class="cta-legal">Auto-renews · Cancel anytime · Terms · Privacy</div>
+        </div>
+
+      </div>
+    </div>
+    <div style="font-size:0.7rem;color:var(--txt3);text-align:center;max-width:140px;">Yearly pre-selected. One tap to buy.</div>
+  </div>
+
+  <!-- Arrow 3→4 -->
+  <div class="arrow-wrap">
+    <div class="arrow">
+      <div style="display:flex;align-items:center;">
+        <div class="arrow-line"></div>
+        <div class="arrow-tip">▶</div>
+      </div>
+      <div class="arrow-desc">purchase confirmed</div>
+    </div>
+  </div>
+
+  <!-- Screen 4: Success -->
+  <div class="screen-wrap">
+    <div class="step-num">4</div>
+    <div class="screen-label">Purchase Success</div>
+    <div class="phone">
+      <div class="phone-notch"><div class="notch-pill"></div></div>
+      <div class="phone-screen">
+        <div class="status-bar"><span>9:41</span><span>●●●</span></div>
+        <div class="success-screen">
+          <div class="success-emoji">🎉</div>
+          <div class="success-title">You're Pro!</div>
+          <div class="success-sub">Everything is unlocked.<br>Ads are gone forever.</div>
+          <div class="success-unlocked">
+            <div class="success-unlocked-title">Now unlocked</div>
+            <div class="success-unlock-item">Business mode</div>
+            <div class="success-unlock-item">Presentation mode</div>
+            <div class="success-unlock-item">All 12 fonts</div>
+            <div class="success-unlock-item">All colors + custom</div>
+            <div class="success-unlock-item">Ads removed</div>
+          </div>
+          <button class="success-btn">Start Using Pro →</button>
+        </div>
+      </div>
+    </div>
+    <div style="font-size:0.7rem;color:var(--txt3);text-align:center;max-width:140px;">Celebrate the purchase. List what they unlocked.</div>
+  </div>
+
+</div>
+
+<!-- ── Trigger table ───────────────────────────────────────────── -->
+<div class="section-divider" style="margin-top:52px;"><span>When does the upgrade prompt appear?</span></div>
+
+<div class="trigger-table">
+  <div class="trigger-table-header">
+    <h2>Upgrade Prompt Triggers</h2>
+    <p>Every entry point leads to the same subscription screen</p>
+  </div>
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>User Action</th>
+        <th>What Happens</th>
+        <th>UI Pattern</th>
+        <th>Priority</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Taps a locked font</td>
+        <td>Bottom sheet slides up with feature preview + "See Plans" button</td>
+        <td>Bottom sheet</td>
+        <td><span style="color:var(--red);font-weight:700;">High</span></td>
+      </tr>
+      <tr>
+        <td>Taps a locked color</td>
+        <td>Same bottom sheet</td>
+        <td>Bottom sheet</td>
+        <td><span style="color:var(--red);font-weight:700;">High</span></td>
+      </tr>
+      <tr>
+        <td>Taps Custom Logo toggle</td>
+        <td>Same bottom sheet</td>
+        <td>Bottom sheet</td>
+        <td><span style="color:var(--red);font-weight:700;">High</span></td>
+      </tr>
+      <tr>
+        <td>Taps "Upgrade to Pro" banner in Settings</td>
+        <td>Goes directly to subscription screen</td>
+        <td>Full screen</td>
+        <td><span style="color:var(--amber);font-weight:700;">Medium</span></td>
+      </tr>
+      <tr>
+        <td>Taps ad banner (accidental)</td>
+        <td>Nothing — ad handles its own tap</td>
+        <td>—</td>
+        <td><span style="color:var(--txt3);font-weight:600;">N/A</span></td>
+      </tr>
+      <tr>
+        <td>Opens app for the 7th time</td>
+        <td>One-time prompt: "Enjoying BigText? Go Pro." Never shown again.</td>
+        <td>Bottom sheet</td>
+        <td><span style="color:var(--amber);font-weight:700;">Medium</span></td>
+      </tr>
+      <tr>
+        <td>Taps "⭐ Go Pro" in top bar</td>
+        <td>Goes directly to subscription screen</td>
+        <td>Full screen</td>
+        <td><span style="color:var(--txt3);font-weight:600;">Low</span></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+</body>
+</html>
